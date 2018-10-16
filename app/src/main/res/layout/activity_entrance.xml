@@ -9,7 +9,8 @@
     <com.android.keenjackdaw.blackcat.ui.LoadingView
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:point_color="@color/greenPoint">
     </com.android.keenjackdaw.blackcat.ui.LoadingView>
 
 </android.support.constraint.ConstraintLayout>
