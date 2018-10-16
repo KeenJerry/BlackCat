@@ -26,7 +26,8 @@ android {
     repositories {
         flatDir(
                 dirs: 'libs'
-        ) }
+        )
+    }
 }
 
 dependencies {
@@ -39,6 +40,6 @@ dependencies {
 
     // compile libblackcat'
     // FixMe libblackcat does not exist, but only citrusfacesdk
-    implementation(name:'citrusfacesdk', ext:'aar')
+    implementation(name: 'citrusfacesdk', ext: 'aar')
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 }

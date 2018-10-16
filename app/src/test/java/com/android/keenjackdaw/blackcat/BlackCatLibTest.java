@@ -9,6 +9,5 @@ public class BlackCatLibTest {
     @Test
     public void main(){
         System.out.println("Start BlackCatLib test...");
-
     }
 }
