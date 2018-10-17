@@ -20,7 +20,6 @@ public class LoadingView extends ConstraintLayout{
         super(context, attrs, defStyleAttr);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingView);
-
         
         a.recycle();
     }
