@@ -12,4 +12,6 @@
         <item name="android:background">@color/blackBackground</item>
     </style>
 
+    <style name="MainTheme" parent="Theme.AppCompat.NoActionBar">
+    </style>
 </resources>

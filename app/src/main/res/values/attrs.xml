@@ -3,4 +3,8 @@
     <declare-styleable name="LoadingView">
         <attr name="point_color" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="CameraView">
+
+    </declare-styleable>
 </resources>
