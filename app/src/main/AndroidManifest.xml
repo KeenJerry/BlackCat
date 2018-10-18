@@ -19,7 +19,7 @@
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
 
         <activity
-            android:name=".EntranceActivity"
+            android:name=".activity.EntranceActivity"
             android:theme="@style/EntranceTheme"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.CameraActivity"
             android:theme="@style/MainTheme"
             android:screenOrientation="portrait">
         </activity>

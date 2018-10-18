@@ -1,10 +1,11 @@
-package com.android.keenjackdaw.blackcat;
+package com.android.keenjackdaw.blackcat.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.ui.LoadingView;
 
 public class EntranceActivity extends AppCompatActivity {
@@ -19,7 +20,7 @@ public class EntranceActivity extends AppCompatActivity {
 
         final long DELAY_MILLS = 3000;
         loadingView = findViewById(R.id.loading_view);
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, CameraActivity.class);
         handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
