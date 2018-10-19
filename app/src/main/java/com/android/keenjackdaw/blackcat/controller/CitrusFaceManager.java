@@ -27,8 +27,12 @@ public class CitrusFaceManager {
     public void initCitrusFaceSDK() throws BlackCatException{
         citrusFaceSDK.Init(appContext);
 
+        String dbPath = Environment.getExternalStorageDirectory().getPath() + "face.db";
+        BaseInfo.ExternalStorageState state = checkExternalStorage(dbPath);
+        if(state != BaseInfo.ExternalStorageState.All_ALLOWED){
+            throw new BlackCatException("External storage access not allowed or only allow read.");
+        }
         citrusFaceSDK.DBSet(Environment.getExternalStorageDirectory().getPath() + "face.db");
-
 
     }
 
