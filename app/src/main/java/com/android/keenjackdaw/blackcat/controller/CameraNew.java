@@ -92,6 +92,7 @@ public class CameraNew {
     private void startPreview(){
         try{
             previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
             CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
             SurfaceTexture surfaceTexture = cameraView.getSurfaceTexture();
             Surface workingSurface = new Surface(surfaceTexture);
