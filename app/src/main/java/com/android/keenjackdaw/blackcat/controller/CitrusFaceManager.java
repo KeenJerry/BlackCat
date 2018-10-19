@@ -29,8 +29,12 @@ public class CitrusFaceManager {
     }
 
     public void initCitrusFaceSDK() throws BlackCatException{
+        citrusFaceSDK = new CitrusFaceSDK();
+        if(!auth()){
+            throw new BlackCatException("SDK auth failed.");
+        }
         citrusFaceSDK.Init(appContext);
-
+        
         String dbPath = Environment.getExternalStorageDirectory().getPath() + "face.db";
         BaseInfo.ExternalStorageState state = checkExternalStorage();
         if(state != BaseInfo.ExternalStorageState.All_ALLOWED){
@@ -53,5 +57,8 @@ public class CitrusFaceManager {
         }
     }
 
+    private boolean auth(){
+        return citrusFaceSDK.Authenic(BaseInfo.key, BaseInfo.secret, BaseInfo.deviceId, BaseInfo.deviceTypeId);
+    }
     public void startFaceDetection(){}
 }
