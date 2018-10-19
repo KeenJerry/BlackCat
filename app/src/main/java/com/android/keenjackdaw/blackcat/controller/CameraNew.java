@@ -1,4 +1,4 @@
-package com.android.keenjackdaw.blackcat.Controller;
+package com.android.keenjackdaw.blackcat.controller;
 
 import android.Manifest;
 import android.content.Context;
