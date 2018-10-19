@@ -29,6 +29,16 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        initCitrusFaceSDK();
+    }
+
+    protected void initCitrusFaceSDK(){
+        // TODO Init work.
+    }
 
     public Fragment getFragmentContainer() {
         return fragmentContainer;
