@@ -11,6 +11,7 @@ import com.android.keenjackdaw.blackcat.fragment.CameraFragment;
 public class CameraActivity extends AppCompatActivity {
 
     private final String activityTag = "Camera Activity";
+    Fragment fragmentContainer = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +19,7 @@ public class CameraActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        Fragment fragmentContainer = fragmentManager.findFragmentById(R.id.fragment_container);
+        fragmentContainer = fragmentManager.findFragmentById(R.id.fragment_container);
         if(fragmentContainer == null){
             fragmentContainer = new CameraFragment();
             fragmentManager.beginTransaction()
@@ -29,4 +30,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
+    public Fragment getFragmentContainer() {
+        return fragmentContainer;
+    }
 }
