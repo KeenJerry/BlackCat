@@ -33,11 +33,6 @@ public class CameraActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        initCitrusFaceSDK();
-    }
-
-    protected void initCitrusFaceSDK(){
-        // TODO Init work.
     }
 
     public Fragment getFragmentContainer() {
