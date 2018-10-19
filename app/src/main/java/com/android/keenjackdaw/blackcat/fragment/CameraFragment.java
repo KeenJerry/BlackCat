@@ -10,7 +10,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.Controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
