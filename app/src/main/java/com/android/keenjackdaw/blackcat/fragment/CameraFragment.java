@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.android.keenjackdaw.blackcat.controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
+import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 
@@ -19,15 +20,26 @@ public class CameraFragment extends Fragment {
 
     CameraNew cameraNew = CameraNew.getInstance();
     CameraView cameraView = null;
+    CitrusFaceManager citrusFaceManager = null;
     Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
        View v = inflater.inflate(R.layout.fragment_camera, container, false);
+
+       citrusFaceManager = CitrusFaceManager.getInstance();
+       citrusFaceManager.setUpAppInfo();
+       try{
+           citrusFaceManager.initCitrusFaceSDK();
+       }
+       catch (BlackCatException e){
+           e.printStackTrace();
+       }
 
        cameraView = v.findViewById(R.id.camera_view);
        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -40,6 +52,8 @@ public class CameraFragment extends Fragment {
                catch (BlackCatException e){
                    e.printStackTrace();
                }
+
+               citrusFaceManager.startFaceDetection();
            }
 
            @Override
