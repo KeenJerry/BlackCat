@@ -3,7 +3,6 @@ package com.android.keenjackdaw.blackcat.ui;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
-import android.view.Surface;
 import android.view.TextureView;
 
 public class CameraView extends TextureView {

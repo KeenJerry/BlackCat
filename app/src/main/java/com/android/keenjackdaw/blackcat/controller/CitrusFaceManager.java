@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class CitrusFaceManager {
     private CitrusFaceManager() {}
-
+    // FIXME It's not an error!!!!!
     private static CitrusFaceManager instance = new CitrusFaceManager();
     private byte[][] byteBuffers = null;
     private CameraActivity cameraActivity = null;
@@ -39,7 +39,7 @@ public class CitrusFaceManager {
         }
         citrusFaceSDK.Init(appContext);
 
-        // FIXME It's not an error.
+        // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
         CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
         setBuffer(cameraView.getWidth(), cameraView.getHeight());
 

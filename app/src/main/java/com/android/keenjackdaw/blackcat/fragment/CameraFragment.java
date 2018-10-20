@@ -33,13 +33,6 @@ public class CameraFragment extends Fragment {
        View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
        citrusFaceManager = CitrusFaceManager.getInstance();
-       citrusFaceManager.setUpAppInfo();
-       try{
-           citrusFaceManager.initCitrusFaceSDK();
-       }
-       catch (BlackCatException e){
-           e.printStackTrace();
-       }
 
        cameraView = v.findViewById(R.id.camera_view);
        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -48,6 +41,14 @@ public class CameraFragment extends Fragment {
                cameraNew.setUpAppInfo();
                try {
                    cameraNew.initCamera();
+               }
+               catch (BlackCatException e){
+                   e.printStackTrace();
+               }
+
+               citrusFaceManager.setUpAppInfo();
+               try{
+                   citrusFaceManager.initCitrusFaceSDK();
                }
                catch (BlackCatException e){
                    e.printStackTrace();
