@@ -79,13 +79,37 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         faceRect = new Rect();
 
         setPaintParam();
+
+        setDrawRunnable();
+        drawRunnable.setRunning(true);
     }
 
+    private void setDrawRunnable(){
+        drawRunnable = new BlackCatRunnable() {
+            @Override
+            protected void blackCatRun() {
+                while(drawRunnable.isRunning()){
+                    // TODO Complete
+                }
+            }
+
+            @Override
+            protected void draw() {
+                // TODO Complete
+            }
+
+            @Override
+            protected void detect() {
+                // TODO Complete
+            }
+        };
+    }
     private void setPaintParam(){
         paintFaceRect.setStyle(Paint.Style.STROKE);
         paintFaceRect.setColor(Color.GREEN);
         paintFaceRect.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
     }
+    
     public void releaseCanvas(){
         if (canvas != null){
             surfaceHolder.unlockCanvasAndPost(canvas);
