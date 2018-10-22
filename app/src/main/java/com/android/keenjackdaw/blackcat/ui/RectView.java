@@ -82,7 +82,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     private void setPaintParam(){
         paintFaceRect.setStyle(Paint.Style.STROKE);
         paintFaceRect.setColor(Color.GREEN);
-        paintFaceRect.setStrokeWidth(Settings.faceRectStrokeWidth);
+        paintFaceRect.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
     }
     public void releaseCanvas(){
         if (canvas != null){

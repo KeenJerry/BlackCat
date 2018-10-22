@@ -47,14 +47,14 @@ public class CitrusFaceManager {
         citrusFaceSDK.SetSizeROIWithBuffer(
                 cameraView.getWidth(),
                 cameraView.getHeight(),
-                Settings.imageChannelNum,
-                Settings.frameNumInCache,
+                Settings.IMAGE_CHANNEL_NUM,
+                Settings.FRAME_NUM_IN_CACHE,
                 byteBuffers,
-                (int)Settings.roiX * cameraView.getWidth(),
-                (int)Settings.roiY * cameraView.getHeight(),
-                (int)Settings.roiW * cameraView.getWidth(),
-                (int)Settings.roiH * cameraView.getHeight(),
-                Settings.scale);
+                (int)Settings.ROI_X * cameraView.getWidth(),
+                (int)Settings.ROI_Y * cameraView.getHeight(),
+                (int)Settings.ROI_W * cameraView.getWidth(),
+                (int)Settings.ROI_H * cameraView.getHeight(),
+                Settings.SCALE);
 
         String dbPath = Environment.getExternalStorageDirectory().getPath() + "face.db";
         Settings.ExternalStorageState state = checkExternalStorage();
@@ -79,16 +79,16 @@ public class CitrusFaceManager {
     }
 
     private boolean auth(){
-        return citrusFaceSDK.Authenic(Settings.key, Settings.secret, Settings.deviceId, Settings.deviceTypeId);
+        return citrusFaceSDK.Authenic(Settings.KEY, Settings.SECRET, Settings.DEVICE_ID, Settings.DEVICE_TYPE_ID);
     }
 
     private void setBuffer(int width, int height){
-        byteBuffers = new byte[Settings.imageChannelNum][];
+        byteBuffers = new byte[Settings.IMAGE_CHANNEL_NUM][];
 
-        for(int i = 0; i < Settings.imageChannelNum; i++){
+        for(int i = 0; i < Settings.IMAGE_CHANNEL_NUM; i++){
             byteBuffers[i] = new byte[width * height * 3 / 2];
         }
-        for (int i = 0; i < Settings.imageChannelNum; i++) {
+        for (int i = 0; i < Settings.IMAGE_CHANNEL_NUM; i++) {
             Arrays.fill(byteBuffers[i], (byte) 0);
         }
     }
