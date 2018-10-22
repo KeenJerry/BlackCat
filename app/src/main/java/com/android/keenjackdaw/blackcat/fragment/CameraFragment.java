@@ -25,7 +25,6 @@ public class CameraFragment extends Fragment {
     CameraView cameraView = null;
     RectView rectView = null;
     CitrusFaceManager citrusFaceManager = null;
-    Canvas canvas = null;
     Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -39,8 +38,15 @@ public class CameraFragment extends Fragment {
 
        citrusFaceManager = CitrusFaceManager.getInstance();
 
+        rectView = v.findViewById(R.id.rect_view);
+        try{
+            rectView.init();
+        }
+        catch(BlackCatException e){
+            e.printStackTrace();
+        }
+
        cameraView = v.findViewById(R.id.camera_view);
-       rectView = v.findViewById(R.id.rect_view);
        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
            @Override
            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
