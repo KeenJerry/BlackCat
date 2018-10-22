@@ -26,4 +26,5 @@ public class Settings {
     public static final float SCALE = 1.0f;
 
     public static final int FACE_RECT_STROKE_WIDTH = 5;
+    public static final String TAG = "BlackCatTAG";
 }

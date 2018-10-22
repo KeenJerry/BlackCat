@@ -2,6 +2,7 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
@@ -50,6 +51,7 @@ public class CitrusFaceManager {
         // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
         CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
         setBuffer(cameraView.getWidth(), cameraView.getHeight());
+        Log.i(Settings.TAG,  "cameraView width:" + cameraView.getWidth() + " cameraView width:" + cameraView.getHeight());
 
         citrusFaceSDK.SetSizeROIWithBuffer(
                 cameraView.getWidth(),

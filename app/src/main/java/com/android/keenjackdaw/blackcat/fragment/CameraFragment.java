@@ -1,6 +1,5 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
-import android.graphics.Canvas;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,11 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
@@ -22,7 +21,6 @@ import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 
 public class CameraFragment extends Fragment {
-    final String TAG = "BlackCatTAG";
 
     CameraNew cameraNew = CameraNew.getInstance();
     CameraView cameraView = null;
@@ -72,14 +70,9 @@ public class CameraFragment extends Fragment {
                    e.printStackTrace();
                }
 
-               // FIXME TEST
                setDetectionRunnable();
                setRecognitionRunnable();
-               detectionRunnable.setRunning(true);
-               recognitionRunnable.setRunning(true);
 
-               new Thread(detectionRunnable).start();
-               new Thread(recognitionRunnable).start();
            }
 
            @Override
@@ -89,14 +82,20 @@ public class CameraFragment extends Fragment {
 
            @Override
            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+               detectionRunnable.setRunning(false);
+               recognitionRunnable.setRunning(false);
                return false;
            }
 
            @Override
            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
                citrusFaceManager.doFaceTrack();
-               // TODO Delete below after debug
-               Log.i(TAG, "setCurrentTime");
+               if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
+                   detectionRunnable.setRunning(true);
+                   recognitionRunnable.setRunning(true);
+                   new Thread(detectionRunnable).start();
+                   // new Thread(recognitionRunnable).start();
+               }
 
            }
        });
@@ -113,12 +112,12 @@ public class CameraFragment extends Fragment {
                 while (isRunning()){
                     try{
                         // TEST
-                        Thread.sleep(2000);
+                        // Thread.sleep(2000);
 
                         setCurrentTime(System.currentTimeMillis());
                         int faceNum = citrusFaceManager.getFaceNum();
                         // TODO Delete below after debug
-                        Log.i(TAG,  "face detected:" + faceNum);
+                        Log.i(Settings.TAG,  "face detected:" + faceNum);
                         setCurrentTime(System.currentTimeMillis() - getCurrentTime());
                         if (faceNum == 5){
                             while(citrusFaceManager.getResFaceNum() == 5){
@@ -144,7 +143,7 @@ public class CameraFragment extends Fragment {
                 while(isRunning()){
                     try{
 
-                        Thread.sleep(2000);
+                        // Thread.sleep(2000);
                         // TODO Delete the above code before implementing any further, it's a trick to make it correct.
                         throw new InterruptedException();
                     }
