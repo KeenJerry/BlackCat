@@ -24,6 +24,9 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Rect faceRect = null;
 
+    private Thread drawThread = null;
+    private Runnable drawRunnable = null;
+
     public RectView(Context context) {
         super(context);
     }
@@ -37,8 +40,10 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) { //
-        //TODO Complete definition.
+    public void surfaceCreated(SurfaceHolder holder) {
+        drawThread = new Thread(drawRunnable);
+
+        drawThread.start();
     }
 
     @Override
@@ -48,7 +53,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        //TODO Complete definition.
+        drawThread.interrupt();
     }
 
     public void init() throws BlackCatException{
@@ -72,11 +77,8 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         paintFaceRect = new Paint();
 
         faceRect = new Rect();
+
         setPaintParam();
-    }
-
-    public void drawRect(){
-
     }
 
     private void setPaintParam(){

@@ -93,7 +93,7 @@ public class CitrusFaceManager {
         }
     }
 
-    public void doFaceDetection(){
+    public void doFaceTrack(){
 
         timeRange.frameCount++;
         timeRange.frameCurTime = System.currentTimeMillis();

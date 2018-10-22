@@ -79,7 +79,7 @@ public class CameraFragment extends Fragment {
 
            @Override
            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-               citrusFaceManager.doFaceDetection();
+               citrusFaceManager.doFaceTrack();
 
            }
        });
