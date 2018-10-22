@@ -94,7 +94,7 @@ public class CameraFragment extends Fragment {
     }
 
     public void setDetectionRunnable(){
-        recognitionRunnable = new BlackCatRunnable() {
+        detectionRunnable = new BlackCatRunnable() {
             @Override
             protected void blackCatRun() {
 
@@ -117,22 +117,16 @@ public class CameraFragment extends Fragment {
                     }
                 }
             }
-
-            @Override
-            protected void draw() {
-
-            }
-
-            @Override
-            protected void detect() {
-
-            }
-
         };
     }
 
     public void setRecognitionRunnable(){
+        recognitionRunnable = new BlackCatRunnable() {
+            @Override
+            protected void blackCatRun() {
 
+            }
+        };
     }
 
 }
