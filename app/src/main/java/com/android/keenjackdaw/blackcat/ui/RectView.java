@@ -12,9 +12,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.android.keenjackdaw.blackcat.Settings;
-import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
-import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
 public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -28,17 +25,17 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     public RectView(Context context) {
         super(context);
-        init();
+
     }
 
     public RectView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        init();
+
     }
 
     public RectView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+
     }
 
     @Override
