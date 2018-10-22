@@ -102,6 +102,8 @@ public class CitrusFaceManager {
         citrusFaceSDK.FaceTrack();
     }
 
+    public void drawRect(){}
+
     static class TimeRange {
         private long frameCount;
         private long frameCurTime;
