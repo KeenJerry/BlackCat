@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
+import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 
 public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -25,18 +26,21 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     private Rect faceRect = null;
 
     private Thread drawThread = null;
-    private Runnable drawRunnable = null;
+    private BlackCatRunnable drawRunnable = null;
 
     public RectView(Context context) {
         super(context);
+        init();
     }
 
     public RectView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        init();
     }
 
     public RectView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     @Override
@@ -56,12 +60,8 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         drawThread.interrupt();
     }
 
-    public void init() throws BlackCatException{
+    public void init(){
         surfaceHolder = getHolder();
-
-        if(surfaceHolder == null){
-            throw new BlackCatException();
-        }
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 

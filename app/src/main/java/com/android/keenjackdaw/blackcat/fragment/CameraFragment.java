@@ -38,13 +38,7 @@ public class CameraFragment extends Fragment {
 
        citrusFaceManager = CitrusFaceManager.getInstance();
 
-        rectView = v.findViewById(R.id.rect_view);
-        try{
-            rectView.init();
-        }
-        catch(BlackCatException e){
-            e.printStackTrace();
-        }
+       rectView = v.findViewById(R.id.rect_view);
 
        cameraView = v.findViewById(R.id.camera_view);
        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
