@@ -24,4 +24,6 @@ public class Settings {
     public static final float roiH = 1.0f;
     public static final float roiW = 1.0f;
     public static final float scale = 1.0f;
+
+    public static final int faceRectStrokeWidth = 5;
 }

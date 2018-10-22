@@ -6,19 +6,23 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 
-public class RectView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SurfaceHolder surfaceHolder = null;
     private Canvas canvas = null;
 
     private Paint paintFaceRect = null;
     private Paint paintAnchor   = null;
+
+    private Rect faceRect = null;
 
     public RectView(Context context) {
         super(context);
@@ -47,11 +51,6 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback, Run
         //TODO Complete definition.
     }
 
-    @Override
-    public void run() {
-        //TODO Complete definition.
-    }
-
     public void init() throws BlackCatException{
         surfaceHolder = getHolder();
 
@@ -71,5 +70,23 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback, Run
 
         paintAnchor = new Paint();
         paintFaceRect = new Paint();
+
+        faceRect = new Rect();
+        setPaintParam();
+    }
+
+    public void drawRect(){
+
+    }
+
+    private void setPaintParam(){
+        paintFaceRect.setStyle(Paint.Style.STROKE);
+        paintFaceRect.setColor(Color.GREEN);
+        paintFaceRect.setStrokeWidth(Settings.faceRectStrokeWidth);
+    }
+    public void releaseCanvas(){
+        if (canvas != null){
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        }
     }
 }
