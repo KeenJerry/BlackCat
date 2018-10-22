@@ -120,6 +120,7 @@ public class CameraNew {
         catch (CameraAccessException e){
             e.printStackTrace();
         }
+        // TODO Add ImageReader to get preview data per frame
     }
 
     private void getAvailableCameraInfo(){
