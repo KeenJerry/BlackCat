@@ -21,6 +21,8 @@ import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Collections;
 
 public class CameraNew {
@@ -39,6 +41,7 @@ public class CameraNew {
     private final static int CAMERA_REQUEST = 10086;
     private CaptureRequest.Builder previewRequestBuilder = null;
 
+    @Contract(pure = true)
     public static CameraNew getInstance() {
         if(instance == null){
             instance = new CameraNew();

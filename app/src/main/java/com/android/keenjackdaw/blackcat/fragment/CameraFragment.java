@@ -18,6 +18,7 @@ import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.android.keenjackdaw.blackcat.ui.RectView;
+import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 
 public class CameraFragment extends Fragment {
 
@@ -25,6 +26,9 @@ public class CameraFragment extends Fragment {
     CameraView cameraView = null;
     RectView rectView = null;
     CitrusFaceManager citrusFaceManager = null;
+
+    private BlackCatRunnable detectionRunnable = null;
+    private BlackCatRunnable recognitionRunnable = null;
     Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -34,14 +38,15 @@ public class CameraFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-       View v = inflater.inflate(R.layout.fragment_camera, container, false);
+        View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
-       citrusFaceManager = CitrusFaceManager.getInstance();
+        citrusFaceManager = CitrusFaceManager.getInstance();
 
-       rectView = v.findViewById(R.id.rect_view);
+        cameraView = v.findViewById(R.id.camera_view);
+        rectView = v.findViewById(R.id.rect_view);
 
-       cameraView = v.findViewById(R.id.camera_view);
-       cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+
+        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
            @Override
            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                cameraNew.setUpAppInfo();
@@ -59,6 +64,13 @@ public class CameraFragment extends Fragment {
                catch (BlackCatException e){
                    e.printStackTrace();
                }
+
+               setDetectionRunnable();
+               setRecognitionRunnable();
+               detectionRunnable.setRunning(true);
+               recognitionRunnable.setRunning(true);
+               new Thread(detectionRunnable).start();
+               new Thread(recognitionRunnable).start();
            }
 
            @Override
@@ -77,7 +89,50 @@ public class CameraFragment extends Fragment {
 
            }
        });
-       return v;
+
+        return v;
+    }
+
+    public void setDetectionRunnable(){
+        recognitionRunnable = new BlackCatRunnable() {
+            @Override
+            protected void blackCatRun() {
+
+                while (isRunning()){
+                    try{
+                        setCurrentTime(System.currentTimeMillis());
+                        int faceNum = citrusFaceManager.getFaceNum();
+                        setCurrentTime(System.currentTimeMillis() - getCurrentTime());
+                        if (faceNum == 5){
+                            while(citrusFaceManager.getResFaceNum() == 5){
+                                Thread.sleep(1000);
+                            }
+                        }
+                        else{
+                            Thread.sleep(500);
+                        }
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void draw() {
+
+            }
+
+            @Override
+            protected void detect() {
+
+            }
+
+        };
+    }
+
+    public void setRecognitionRunnable(){
+
     }
 
 }

@@ -11,6 +11,8 @@ import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Arrays;
 
 public class CitrusFaceManager {
@@ -23,7 +25,12 @@ public class CitrusFaceManager {
     private CitrusFaceSDK citrusFaceSDK = null;
     private static final TimeRange timeRange = new TimeRange();
 
+    @Contract(pure = true)
     public static CitrusFaceManager getInstance() {
+        if(instance == null){
+            instance = new CitrusFaceManager();
+            return instance;
+        }
         return instance;
     }
 
@@ -102,7 +109,13 @@ public class CitrusFaceManager {
         citrusFaceSDK.FaceTrack();
     }
 
-    public void drawRect(){}
+    public int getFaceNum(){
+        return citrusFaceSDK.FaceDetect();
+    }
+
+    public int getResFaceNum(){
+        return citrusFaceSDK.GetResFaceNum();
+    }
 
     static class TimeRange {
         private long frameCount;

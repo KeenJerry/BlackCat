@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
+import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
 public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -24,9 +25,6 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     private Paint paintAnchor   = null;
 
     private Rect faceRect = null;
-
-    private Thread drawThread = null;
-    private BlackCatRunnable drawRunnable = null;
 
     public RectView(Context context) {
         super(context);
@@ -45,9 +43,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        drawThread = new Thread(drawRunnable);
-
-        drawThread.start();
+        // TODO Complete definition.
     }
 
     @Override
@@ -57,7 +53,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        drawThread.interrupt();
+        //TODO Complete definition.
     }
 
     public void init(){
@@ -80,36 +76,14 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
         setPaintParam();
 
-        setDrawRunnable();
-        drawRunnable.setRunning(true);
     }
 
-    private void setDrawRunnable(){
-        drawRunnable = new BlackCatRunnable() {
-            @Override
-            protected void blackCatRun() {
-                while(drawRunnable.isRunning()){
-                    // TODO Complete
-                }
-            }
-
-            @Override
-            protected void draw() {
-                // TODO Complete
-            }
-
-            @Override
-            protected void detect() {
-                // TODO Complete
-            }
-        };
-    }
     private void setPaintParam(){
         paintFaceRect.setStyle(Paint.Style.STROKE);
         paintFaceRect.setColor(Color.GREEN);
         paintFaceRect.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
     }
-    
+
     public void releaseCanvas(){
         if (canvas != null){
             surfaceHolder.unlockCanvasAndPost(canvas);
