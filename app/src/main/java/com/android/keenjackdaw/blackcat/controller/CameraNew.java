@@ -153,6 +153,7 @@ public class CameraNew {
                 camera.close();
                 cameraDevice = null;
             }
+
         };
     }
 }

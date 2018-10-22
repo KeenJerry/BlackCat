@@ -21,6 +21,7 @@ public class CitrusFaceManager {
     private CameraActivity cameraActivity = null;
     private Context appContext = null;
     private CitrusFaceSDK citrusFaceSDK = null;
+    private static final TimeRange timeRange = new TimeRange();
 
     public static CitrusFaceManager getInstance() {
         return instance;
@@ -92,8 +93,38 @@ public class CitrusFaceManager {
         }
     }
 
-    public void startFaceDetection(){
+    public void doFaceDetection(){
 
+        timeRange.frameCount++;
+        timeRange.frameCurTime = System.currentTimeMillis();
+        timeRange.calculateFPS();
+        citrusFaceSDK.SetImageInd((int)timeRange.frameCount - 1);
+        citrusFaceSDK.FaceTrack();
     }
 
+    static class TimeRange {
+        private long frameCount;
+        private long frameCurTime;
+        private long frameForTime;
+        private long frameStep;
+        private float frameFPS;
+
+        void reset() {
+            frameCount = 0;
+            frameCurTime = 0;
+            frameForTime = 0;
+            frameStep = 100;
+            frameFPS = 30.f;
+        }
+
+        float calculateFPS() {
+            frameFPS = 100000.0f / (frameCurTime - frameForTime);
+            frameForTime = frameCurTime;
+            return frameFPS;
+        }
+
+        boolean updateFPS() {
+            return (frameCount % frameStep == 0);
+        }
+    }
 }

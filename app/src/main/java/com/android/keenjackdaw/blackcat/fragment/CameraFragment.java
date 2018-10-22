@@ -53,8 +53,6 @@ public class CameraFragment extends Fragment {
                catch (BlackCatException e){
                    e.printStackTrace();
                }
-
-               citrusFaceManager.startFaceDetection();
            }
 
            @Override
@@ -69,7 +67,7 @@ public class CameraFragment extends Fragment {
 
            @Override
            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+               citrusFaceManager.doFaceDetection();
            }
        });
        return v;
