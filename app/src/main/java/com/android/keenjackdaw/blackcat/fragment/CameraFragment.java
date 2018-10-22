@@ -124,7 +124,15 @@ public class CameraFragment extends Fragment {
         recognitionRunnable = new BlackCatRunnable() {
             @Override
             protected void blackCatRun() {
-
+                while(isRunning()){
+                    try{
+                        // TODO Delete the above code before implementing any further, it's a trick to make it correct.
+                        throw new InterruptedException();
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
             }
         };
     }
