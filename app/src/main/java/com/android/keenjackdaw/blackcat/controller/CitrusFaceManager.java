@@ -35,6 +35,10 @@ public class CitrusFaceManager {
         return instance;
     }
 
+    public void setByteBuffers(byte[][] byteBuffers) {
+        this.byteBuffers = byteBuffers;
+    }
+
     public void setUpAppInfo(){
         cameraActivity = (CameraActivity) BlackCatApplication.getCurrentActivity().get();
         appContext = cameraActivity.getApplicationContext();
@@ -65,7 +69,8 @@ public class CitrusFaceManager {
                 (int)Settings.ROI_H * cameraView.getHeight(),
                 Settings.SCALE);
 
-        String dbPath = Environment.getExternalStorageDirectory().getPath() + "face.db";
+        // FIXME it's not an error orz...
+        String dbPath = "/sdcard/Citrus/dataset/demo/face.db";
         Settings.ExternalStorageState state = checkExternalStorage();
         if(state != Settings.ExternalStorageState.All_ALLOWED){
             throw new BlackCatException("External storage access not allowed or only allow read.");
@@ -115,7 +120,7 @@ public class CitrusFaceManager {
         return citrusFaceSDK.FaceDetect();
     }
 
-    public int getResFaceNum(){
+    public int getResFaceNum() {
         return citrusFaceSDK.GetResFaceNum();
     }
 

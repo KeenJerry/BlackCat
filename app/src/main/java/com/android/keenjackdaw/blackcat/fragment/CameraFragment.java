@@ -94,8 +94,12 @@ public class CameraFragment extends Fragment {
                    detectionRunnable.setRunning(true);
                    recognitionRunnable.setRunning(true);
                    new Thread(detectionRunnable).start();
+                   // TODO Uncomment after completed.
                    // new Thread(recognitionRunnable).start();
                }
+
+               // TODO Delete below after debug
+               // Log.i(Settings.TAG, Arrays.toString(citrusFaceManager.getByteBuffers()[0]));
 
            }
        });
@@ -127,6 +131,8 @@ public class CameraFragment extends Fragment {
                         else{
                             Thread.sleep(500);
                         }
+                        // TODO Delete below after debug
+                        Log.i(Settings.TAG, "buffer changed:");
                     }
                     catch (InterruptedException e){
                         e.printStackTrace();

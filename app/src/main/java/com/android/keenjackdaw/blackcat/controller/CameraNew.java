@@ -3,6 +3,7 @@ package com.android.keenjackdaw.blackcat.controller;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -10,20 +11,24 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.media.Image;
+import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Surface;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
+import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 
 import org.jetbrains.annotations.Contract;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 public class CameraNew {
     private CameraNew(){ }
@@ -99,8 +104,31 @@ public class CameraNew {
             CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
             SurfaceTexture surfaceTexture = cameraView.getSurfaceTexture();
             Surface workingSurface = new Surface(surfaceTexture);
+
+            ImageReader imageReader = ImageReader.newInstance(cameraView.getWidth(), cameraView.getHeight(), ImageFormat.YUV_420_888, 2);
+            imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+                @Override
+                public void onImageAvailable(ImageReader reader) {
+                    Image img = reader.acquireNextImage();
+
+                    byte[][] data = new byte[Settings.IMAGE_CHANNEL_NUM][0];
+                    for(int i = 0; i < Settings.IMAGE_CHANNEL_NUM; i++){
+                        data[i] = new byte[img.getPlanes()[i].getBuffer().remaining()];
+                        img.getPlanes()[i].getBuffer().get(data[i]);
+                        // TODO Delete below after debug
+                        Log.i(Settings.TAG, "data length:" + data[i].length);
+                        // Log.i(Settings.TAG, "image data:" + Arrays.toString(data[i]));
+                    }
+
+                    CitrusFaceManager.getInstance().setByteBuffers(data);
+                    img.close();
+
+                }
+            }, null);
+
             previewRequestBuilder.addTarget(workingSurface);
-            cameraDevice.createCaptureSession(Collections.singletonList(workingSurface), new CameraCaptureSession.StateCallback() {
+            previewRequestBuilder.addTarget(imageReader.getSurface());
+            cameraDevice.createCaptureSession(Arrays.asList(workingSurface, imageReader.getSurface()), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     try{
@@ -120,13 +148,13 @@ public class CameraNew {
         catch (CameraAccessException e){
             e.printStackTrace();
         }
-        // TODO Add ImageReader to get preview data per frame
     }
 
     private void getAvailableCameraInfo(){
         for(String id : cameraIds){
             try{
                 cameraCharacteristics = cameraManager.getCameraCharacteristics(id);
+                Log.i(Settings.TAG, "Camera2 support:" + cameraCharacteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
                 currentCameraId = id;
             }
             catch (CameraAccessException e){
