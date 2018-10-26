@@ -50,13 +50,19 @@ public class CameraFragment extends Fragment {
            @Override
            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 
-               cameraNew.setUpAppInfo();
+               // TODO Refactor
+               if(Settings.IS_USING_CAMERA2){
+                   cameraNew.setUpAppInfo();
 
-               try {
-                   cameraNew.initCamera();
+                   try {
+                       cameraNew.initCamera();
+                   }
+                   catch (BlackCatException e){
+                       e.printStackTrace();
+                   }
                }
-               catch (BlackCatException e){
-                   e.printStackTrace();
+               else{
+                   // TODO add camera methods
                }
 
                rectView.init();

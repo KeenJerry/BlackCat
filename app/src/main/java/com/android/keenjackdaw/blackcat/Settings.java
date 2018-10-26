@@ -1,5 +1,7 @@
 package com.android.keenjackdaw.blackcat;
 
+import java.security.PublicKey;
+
 public class Settings {
     private Settings(){}
 
@@ -27,4 +29,7 @@ public class Settings {
 
     public static final int FACE_RECT_STROKE_WIDTH = 5;
     public static final String TAG = "BlackCatTAG";
+    public static final Boolean IS_USING_CAMERA2 = false;
+
+    public static final int CAMERA_REQUEST = 10086;
 }
