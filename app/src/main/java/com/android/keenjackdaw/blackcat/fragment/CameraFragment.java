@@ -1,5 +1,6 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
+import android.graphics.Camera;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
+import com.android.keenjackdaw.blackcat.controller.CameraOld;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
@@ -23,6 +25,8 @@ import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 public class CameraFragment extends Fragment {
 
     CameraNew cameraNew = CameraNew.getInstance();
+    CameraOld cameraOld = CameraOld.getInstance();
+
     CameraView cameraView = null;
     RectView rectView = null;
     CitrusFaceManager citrusFaceManager = null;
@@ -62,7 +66,20 @@ public class CameraFragment extends Fragment {
                    }
                }
                else{
+                   cameraOld.setUpAppInfo();
+
+                   try{
+                       cameraOld.initCamera();
+                       cameraOld.openFrontCamera();
+                   }
+                   catch (BlackCatException e){
+                       e.printStackTrace();
+                   }
+
+                   cameraOld.setPreviewCallback();
+                   cameraOld.startPreview();
                    // TODO add camera methods
+
                }
 
                rectView.init();

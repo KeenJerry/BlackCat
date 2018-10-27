@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
 
+// TODO Refactor
 public class CameraNew {
     private CameraNew(){ }
 
