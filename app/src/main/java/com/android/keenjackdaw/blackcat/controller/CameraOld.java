@@ -8,7 +8,7 @@ import android.util.Size;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.utils.CameraUtil;
+import com.android.keenjackdaw.blackcat.utils.CameraOldUtil;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class CameraOld {
     private void setCameraParam(){
         cameraParam = camera.getParameters();
         cameraParam.setPictureFormat(PixelFormat.JPEG);
-        suitablePreviewSize = CameraUtil.getSuitableCameraSize();
+        suitablePreviewSize = CameraOldUtil.getSuitableCameraSize();
         cameraParam.setPictureSize(suitablePreviewSize.getWidth(), suitablePreviewSize.getHeight());
 
         List<String> availableFocusMode = cameraParam.getSupportedFocusModes();
