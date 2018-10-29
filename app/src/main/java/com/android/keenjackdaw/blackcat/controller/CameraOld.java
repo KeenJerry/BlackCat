@@ -10,7 +10,7 @@ import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.ui.CameraView;
+import com.android.keenjackdaw.blackcat.ui.Camera2View;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -104,7 +104,8 @@ public class CameraOld {
     }
 
     public void startPreview(){
-        // TODO Complete definition
+        // TODO Set display holder
+        camera.startPreview();
     }
 
     public void closeCamera(){
@@ -116,7 +117,7 @@ public class CameraOld {
         Collections.sort(supportedPreviewSizes, new CameraOldComparator());
         int i = 0;
         // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
-        CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+        Camera2View cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
         for(Size s: supportedPreviewSizes){
             if(s.height >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
                 break;

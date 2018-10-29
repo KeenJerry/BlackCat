@@ -4,6 +4,10 @@
         <attr name="point_color" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="Camera2View">
+
+    </declare-styleable>
+
     <declare-styleable name="CameraView">
 
     </declare-styleable>

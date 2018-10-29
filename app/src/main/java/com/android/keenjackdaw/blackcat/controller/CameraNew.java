@@ -24,7 +24,7 @@ import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.ui.CameraView;
+import com.android.keenjackdaw.blackcat.ui.Camera2View;
 
 import org.jetbrains.annotations.Contract;
 
@@ -102,7 +102,7 @@ public class CameraNew {
         try{
             previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
-            CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+            Camera2View cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
             SurfaceTexture surfaceTexture = cameraView.getSurfaceTexture();
             Surface workingSurface = new Surface(surfaceTexture);
 

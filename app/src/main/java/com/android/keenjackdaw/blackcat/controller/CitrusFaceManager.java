@@ -9,6 +9,7 @@ import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
+import com.android.keenjackdaw.blackcat.ui.Camera2View;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
@@ -53,21 +54,40 @@ public class CitrusFaceManager {
         citrusFaceSDK.Init(appContext);
 
         // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
-        CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
-        setBuffer(cameraView.getWidth(), cameraView.getHeight());
-        Log.i(Settings.TAG,  "cameraView width:" + cameraView.getWidth() + " cameraView width:" + cameraView.getHeight());
+        if(Settings.IS_USING_CAMERA2){
+            Camera2View camera2View = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera2_view);
+            setBuffer(camera2View.getWidth(), camera2View.getHeight());
+            Log.i(Settings.TAG,  "cameraView width:" + camera2View.getWidth() + " cameraView width:" + camera2View.getHeight());
 
-        citrusFaceSDK.SetSizeROIWithBuffer(
-                cameraView.getWidth(),
-                cameraView.getHeight(),
-                Settings.IMAGE_CHANNEL_NUM,
-                Settings.FRAME_NUM_IN_CACHE,
-                byteBuffers,
-                (int)Settings.ROI_X * cameraView.getWidth(),
-                (int)Settings.ROI_Y * cameraView.getHeight(),
-                (int)Settings.ROI_W * cameraView.getWidth(),
-                (int)Settings.ROI_H * cameraView.getHeight(),
-                Settings.SCALE);
+            citrusFaceSDK.SetSizeROIWithBuffer(
+                    camera2View.getWidth(),
+                    camera2View.getHeight(),
+                    Settings.IMAGE_CHANNEL_NUM,
+                    Settings.FRAME_NUM_IN_CACHE,
+                    byteBuffers,
+                    (int)Settings.ROI_X * camera2View.getWidth(),
+                    (int)Settings.ROI_Y * camera2View.getHeight(),
+                    (int)Settings.ROI_W * camera2View.getWidth(),
+                    (int)Settings.ROI_H * camera2View.getHeight(),
+                    Settings.SCALE);
+        }
+        else{
+            CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+            setBuffer(cameraView.getWidth(), cameraView.getHeight());
+            Log.i(Settings.TAG,  "cameraView width:" + cameraView.getWidth() + " cameraView width:" + cameraView.getHeight());
+
+            citrusFaceSDK.SetSizeROIWithBuffer(
+                    cameraView.getWidth(),
+                    cameraView.getHeight(),
+                    Settings.IMAGE_CHANNEL_NUM,
+                    Settings.FRAME_NUM_IN_CACHE,
+                    byteBuffers,
+                    (int)Settings.ROI_X * cameraView.getWidth(),
+                    (int)Settings.ROI_Y * cameraView.getHeight(),
+                    (int)Settings.ROI_W * cameraView.getWidth(),
+                    (int)Settings.ROI_H * cameraView.getHeight(),
+                    Settings.SCALE);
+        }
 
         // FIXME it's not an error orz...
         String dbPath = "/sdcard/Citrus/dataset/demo/face.db";

@@ -1,6 +1,5 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
-import android.graphics.Camera;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,7 @@ import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.controller.CameraOld;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.ui.CameraView;
+import com.android.keenjackdaw.blackcat.ui.Camera2View;
 import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 
@@ -27,7 +26,7 @@ public class CameraFragment extends Fragment {
     CameraNew cameraNew = CameraNew.getInstance();
     CameraOld cameraOld = CameraOld.getInstance();
 
-    CameraView cameraView = null;
+    Camera2View cameraView = null;
     RectView rectView = null;
     CitrusFaceManager citrusFaceManager = null;
 
@@ -42,90 +41,94 @@ public class CameraFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View v = inflater.inflate(R.layout.fragment_camera, container, false);
+        View v = inflater.inflate(R.layout.fragment_camera2, container, false);
 
         citrusFaceManager = CitrusFaceManager.getInstance();
 
-        cameraView = v.findViewById(R.id.camera_view);
+        if(Settings.IS_USING_CAMERA2){
+            cameraView = v.findViewById(R.id.camera2_view);
+            cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+
+                    // TODO Refactor
+                    if(Settings.IS_USING_CAMERA2){
+                        cameraNew.setUpAppInfo();
+
+                        try {
+                            cameraNew.initCamera();
+                        }
+                        catch (BlackCatException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        cameraOld.setUpAppInfo();
+
+                        try{
+                            cameraOld.initCamera();
+                            cameraOld.openFrontCamera();
+                        }
+                        catch (BlackCatException e){
+                            e.printStackTrace();
+                        }
+
+                        cameraOld.setPreviewCallback();
+                        cameraOld.startPreview();
+                        // TODO add camera methods
+
+                    }
+
+                    rectView.init();
+
+                    citrusFaceManager.setUpAppInfo();
+
+                    try{
+                        citrusFaceManager.initCitrusFaceSDK();
+                    }
+                    catch (BlackCatException e){
+                        e.printStackTrace();
+                    }
+
+                    setDetectionRunnable();
+                    setRecognitionRunnable();
+
+                }
+
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                    detectionRunnable.setRunning(false);
+                    recognitionRunnable.setRunning(false);
+                    return false;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+                    citrusFaceManager.doFaceTrack();
+                    if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
+                        detectionRunnable.setRunning(true);
+                        recognitionRunnable.setRunning(true);
+                        new Thread(detectionRunnable).start();
+                        // TODO Uncomment after completed.
+                        // new Thread(recognitionRunnable).start();
+                    }
+
+                    // TODO Delete below after debug
+                    // Log.i(Settings.TAG, Arrays.toString(citrusFaceManager.getByteBuffers()[0]));
+
+                }
+            });
+        }
+        else{
+            cameraView = v.findViewById(R.id.camera_view);
+            
+        }
         rectView = v.findViewById(R.id.rect_view);
-
-
-        cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-           @Override
-           public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-
-               // TODO Refactor
-               if(Settings.IS_USING_CAMERA2){
-                   cameraNew.setUpAppInfo();
-
-                   try {
-                       cameraNew.initCamera();
-                   }
-                   catch (BlackCatException e){
-                       e.printStackTrace();
-                   }
-               }
-               else{
-                   cameraOld.setUpAppInfo();
-
-                   try{
-                       cameraOld.initCamera();
-                       cameraOld.openFrontCamera();
-                   }
-                   catch (BlackCatException e){
-                       e.printStackTrace();
-                   }
-
-                   cameraOld.setPreviewCallback();
-                   cameraOld.startPreview();
-                   // TODO add camera methods
-
-               }
-
-               rectView.init();
-
-               citrusFaceManager.setUpAppInfo();
-
-               try{
-                   citrusFaceManager.initCitrusFaceSDK();
-               }
-               catch (BlackCatException e){
-                   e.printStackTrace();
-               }
-
-               setDetectionRunnable();
-               setRecognitionRunnable();
-
-           }
-
-           @Override
-           public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-           }
-
-           @Override
-           public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-               detectionRunnable.setRunning(false);
-               recognitionRunnable.setRunning(false);
-               return false;
-           }
-
-           @Override
-           public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-               citrusFaceManager.doFaceTrack();
-               if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
-                   detectionRunnable.setRunning(true);
-                   recognitionRunnable.setRunning(true);
-                   new Thread(detectionRunnable).start();
-                   // TODO Uncomment after completed.
-                   // new Thread(recognitionRunnable).start();
-               }
-
-               // TODO Delete below after debug
-               // Log.i(Settings.TAG, Arrays.toString(citrusFaceManager.getByteBuffers()[0]));
-
-           }
-       });
 
         return v;
     }

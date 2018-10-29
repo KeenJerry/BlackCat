@@ -1,11 +1,10 @@
 package com.android.keenjackdaw.blackcat.ui;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
-import android.view.TextureView;
+import android.view.SurfaceView;
 
-public class CameraView extends TextureView {
+public class CameraView extends SurfaceView {
     public CameraView(Context context) {
         super(context);
     }
@@ -18,8 +17,4 @@ public class CameraView extends TextureView {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override
-    public SurfaceTexture getSurfaceTexture() {
-        return super.getSurfaceTexture();
-    }
 }
