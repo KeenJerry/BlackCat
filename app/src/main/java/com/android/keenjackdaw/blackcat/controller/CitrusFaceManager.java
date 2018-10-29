@@ -53,8 +53,8 @@ public class CitrusFaceManager {
         }
         citrusFaceSDK.Init(appContext);
 
-        // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
         if(Settings.IS_USING_CAMERA2){
+            // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
             Camera2View camera2View = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera2_view);
             setBuffer(camera2View.getWidth(), camera2View.getHeight());
             Log.i(Settings.TAG,  "cameraView width:" + camera2View.getWidth() + " cameraView width:" + camera2View.getHeight());
@@ -72,6 +72,7 @@ public class CitrusFaceManager {
                     Settings.SCALE);
         }
         else{
+            // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
             CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
             setBuffer(cameraView.getWidth(), cameraView.getHeight());
             Log.i(Settings.TAG,  "cameraView width:" + cameraView.getWidth() + " cameraView width:" + cameraView.getHeight());

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.support.annotation.NonNull;
+import android.view.SurfaceHolder;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
@@ -12,6 +14,7 @@ import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.Camera2View;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +24,6 @@ public class CameraOld {
 
     private CameraActivity cameraActivity = null;
     private Context appContext = null;
-    private Size suitablePreviewSize = null;
     // FIXME It's not an error!!!!!
     private static CameraOld instance = new CameraOld();
 
@@ -78,6 +80,7 @@ public class CameraOld {
         if(camera == null){
             throw new BlackCatException("Front camera not available");
         }
+        setCameraParam();
     }
 
     public void setPreviewCallback() {
@@ -87,7 +90,7 @@ public class CameraOld {
     private void setCameraParam(){
         cameraParam = camera.getParameters();
         cameraParam.setPictureFormat(PixelFormat.JPEG);
-        suitablePreviewSize = getSuitablePreviewSize();
+        Size suitablePreviewSize = getSuitablePreviewSize();
         cameraParam.setPreviewSize(suitablePreviewSize.width, suitablePreviewSize.height);
 
         List<String> availableFocusMode = cameraParam.getSupportedFocusModes();
@@ -103,8 +106,13 @@ public class CameraOld {
         camera.setParameters(cameraParam);
     }
 
-    public void startPreview(){
-        // TODO Set display holder
+    public void startPreview(SurfaceHolder holder){
+        try{
+            camera.setPreviewDisplay(holder);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         camera.startPreview();
     }
 
@@ -137,7 +145,7 @@ public class CameraOld {
         return supportedPreviewSizes.get(i);
     }
 
-    private boolean isInTolerance(Size size, float aspectRatio){
+    private boolean isInTolerance(@NonNull Size size, float aspectRatio){
         float r = (float)size.height/ (float)size.width;
         return Math.abs(r - aspectRatio) <= Settings.ASPECT_TOLERANCE;
     }

@@ -19,11 +19,11 @@ public abstract class BlackCatRunnable implements Runnable {
         isRunning = running;
     }
 
-    public void setCurrentTime(long currentTime) {
+    protected void setCurrentTime(long currentTime) {
         this.currentTime = currentTime;
     }
 
-    public long getCurrentTime(){
+    protected long getCurrentTime(){
         return currentTime;
     }
 }

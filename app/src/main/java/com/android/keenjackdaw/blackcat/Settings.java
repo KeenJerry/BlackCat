@@ -1,11 +1,7 @@
 package com.android.keenjackdaw.blackcat;
 
-import java.security.PublicKey;
-
 public class Settings {
     private Settings(){}
-
-    public final static int STANDARD_DENSITY = 160;
 
     public enum ExternalStorageState{
         All_ALLOWED,

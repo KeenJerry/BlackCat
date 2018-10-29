@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
-public class CameraView extends SurfaceView {
+public class CameraView extends SurfaceView{
     public CameraView(Context context) {
         super(context);
     }
@@ -16,5 +16,7 @@ public class CameraView extends SurfaceView {
     public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
+
+
 
 }

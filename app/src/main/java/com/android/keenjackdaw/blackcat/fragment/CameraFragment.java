@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.android.keenjackdaw.blackcat.controller.CameraOld;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.Camera2View;
+import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 
@@ -26,7 +28,8 @@ public class CameraFragment extends Fragment {
     CameraNew cameraNew = CameraNew.getInstance();
     CameraOld cameraOld = CameraOld.getInstance();
 
-    Camera2View cameraView = null;
+    Camera2View camera2View = null;
+    CameraView cameraView = null;
     RectView rectView = null;
     CitrusFaceManager citrusFaceManager = null;
 
@@ -46,52 +49,19 @@ public class CameraFragment extends Fragment {
         citrusFaceManager = CitrusFaceManager.getInstance();
 
         if(Settings.IS_USING_CAMERA2){
-            cameraView = v.findViewById(R.id.camera2_view);
-            cameraView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            camera2View = v.findViewById(R.id.camera2_view);
+            camera2View.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                 @Override
                 public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 
-                    // TODO Refactor
-                    if(Settings.IS_USING_CAMERA2){
-                        cameraNew.setUpAppInfo();
+                    cameraNew.setUpAppInfo();
 
-                        try {
-                            cameraNew.initCamera();
-                        }
-                        catch (BlackCatException e){
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        cameraOld.setUpAppInfo();
-
-                        try{
-                            cameraOld.initCamera();
-                            cameraOld.openFrontCamera();
-                        }
-                        catch (BlackCatException e){
-                            e.printStackTrace();
-                        }
-
-                        cameraOld.setPreviewCallback();
-                        cameraOld.startPreview();
-                        // TODO add camera methods
-
-                    }
-
-                    rectView.init();
-
-                    citrusFaceManager.setUpAppInfo();
-
-                    try{
-                        citrusFaceManager.initCitrusFaceSDK();
+                    try {
+                        cameraNew.initCamera();
                     }
                     catch (BlackCatException e){
                         e.printStackTrace();
                     }
-
-                    setDetectionRunnable();
-                    setRecognitionRunnable();
 
                 }
 
@@ -126,9 +96,46 @@ public class CameraFragment extends Fragment {
         }
         else{
             cameraView = v.findViewById(R.id.camera_view);
-            
+            cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+                    cameraOld.setUpAppInfo();
+                    try{
+                        cameraOld.initCamera();
+                        cameraOld.openFrontCamera();
+                    }
+                    catch (BlackCatException e){
+                        e.printStackTrace();
+                    }
+                    cameraOld.setPreviewCallback();
+                    cameraOld.startPreview(holder);
+                }
+
+                @Override
+                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+
+                }
+            });
         }
         rectView = v.findViewById(R.id.rect_view);
+        rectView.init();
+
+        citrusFaceManager.setUpAppInfo();
+
+        try{
+            citrusFaceManager.initCitrusFaceSDK();
+        }
+        catch (BlackCatException e){
+            e.printStackTrace();
+        }
+
+        setDetectionRunnable();
+        setRecognitionRunnable();
 
         return v;
     }
