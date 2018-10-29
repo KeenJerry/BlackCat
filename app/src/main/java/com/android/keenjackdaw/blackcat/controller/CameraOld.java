@@ -3,14 +3,17 @@ package com.android.keenjackdaw.blackcat.controller;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.util.Size;
+import android.hardware.Camera.Size;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
+import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.utils.CameraOldUtil;
+import com.android.keenjackdaw.blackcat.ui.CameraView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CameraOld {
@@ -66,6 +69,8 @@ public class CameraOld {
                 frontCameraOrientation = cameraInfo.orientation;
             }
         }
+
+
     }
 
     public void openFrontCamera() throws BlackCatException{
@@ -76,30 +81,71 @@ public class CameraOld {
     }
 
     public void setPreviewCallback() {
-
+        // TODO Complete definition
     }
 
     private void setCameraParam(){
         cameraParam = camera.getParameters();
         cameraParam.setPictureFormat(PixelFormat.JPEG);
-        suitablePreviewSize = CameraOldUtil.getSuitableCameraSize();
-        cameraParam.setPictureSize(suitablePreviewSize.getWidth(), suitablePreviewSize.getHeight());
+        suitablePreviewSize = getSuitablePreviewSize();
+        cameraParam.setPreviewSize(suitablePreviewSize.width, suitablePreviewSize.height);
 
         List<String> availableFocusMode = cameraParam.getSupportedFocusModes();
         if(availableFocusMode.contains("continuous-video")){
             cameraParam.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
+        else{
+            cameraParam.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
 
+        cameraParam.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+        cameraParam.setPreviewFpsRange(Settings.PREVIEW_FPS_MIN, Settings.PREVIEW_FPS_MAX);
         camera.setParameters(cameraParam);
     }
 
     public void startPreview(){
-
+        // TODO Complete definition
     }
 
     public void closeCamera(){
-
+        // TODO Complete definition
     }
 
+    private Size getSuitablePreviewSize(){
+        List<Size> supportedPreviewSizes = cameraParam.getSupportedPreviewSizes();
+        Collections.sort(supportedPreviewSizes, new CameraOldComparator());
+        int i = 0;
+        // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
+        CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+        for(Size s: supportedPreviewSizes){
+            if(s.height >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
+                break;
+            }
+            i++;
+        }
+
+        if(i == supportedPreviewSizes.size()){
+            i = 0;
+            for(Size s: supportedPreviewSizes){
+                if(s.height >= cameraView.getHeight()){
+                    break;
+                }
+                i++;
+            }
+        }
+        return supportedPreviewSizes.get(i);
+    }
+
+    private boolean isInTolerance(Size size, float aspectRatio){
+        float r = (float)size.height/ (float)size.width;
+        return Math.abs(r - aspectRatio) <= Settings.ASPECT_TOLERANCE;
+    }
+
+    private class CameraOldComparator implements Comparator<Camera.Size> {
+        @Override
+        public int compare(Camera.Size o1, Camera.Size o2) {
+            return Integer.compare(o1.width, o2.width);
+        }
+    }
 
 }

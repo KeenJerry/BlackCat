@@ -33,4 +33,8 @@ public class Settings {
 
     public static final int CAMERA_REQUEST = 10086;
     public static final int CAMERA_NOT_AVAILABLE = -1;
+    public static final int PREVIEW_FPS_MIN = 60;
+    public static final int PREVIEW_FPS_MAX = 90;
+    public static final float ASPECT_TOLERANCE = 0.2f;
+    public static final float ASPECT_RATIO = 0.75f;
 }
