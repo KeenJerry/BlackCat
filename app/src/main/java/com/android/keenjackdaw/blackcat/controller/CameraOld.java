@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.util.Size;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
+import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.utils.CameraOldUtil;
@@ -26,6 +27,10 @@ public class CameraOld {
     private Camera.PreviewCallback previewCallback = null;
     private Camera.Parameters cameraParam = null;
     private int numOfCameras = -1;
+    private int backCameraId = 0;
+    private int frontCameraId = 0;
+    private int backCameraOrientation = 0;
+    private int frontCameraOrientation = 0;
 
     public static CameraOld getInstance(){
         if(instance == null){
@@ -34,17 +39,40 @@ public class CameraOld {
         return instance;
     }
 
-    public void initCamera() throws BlackCatException{
-        camera = Camera.open();
-        if(camera == null){
-            throw new BlackCatException("fail to init camera old");
-        }
-        setCameraParam();
-    }
-
     public void setUpAppInfo(){
         cameraActivity = (CameraActivity) BlackCatApplication.getCurrentActivity().get();
         appContext = cameraActivity.getApplicationContext();
+    }
+
+    public void initCamera() throws BlackCatException{
+
+        numOfCameras = Camera.getNumberOfCameras();
+        if(numOfCameras == Settings.CAMERA_NOT_AVAILABLE){
+            throw new BlackCatException("Camera not available");
+        }
+
+        for(int i = 0; i < numOfCameras; i++){
+            final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+
+            Camera.getCameraInfo(i, cameraInfo);
+
+            if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK){
+                backCameraId = i;
+                backCameraOrientation = cameraInfo.orientation;
+            }
+
+            if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+                frontCameraId = i;
+                frontCameraOrientation = cameraInfo.orientation;
+            }
+        }
+    }
+
+    public void openFrontCamera() throws BlackCatException{
+        camera = Camera.open(frontCameraId);
+        if(camera == null){
+            throw new BlackCatException("Front camera not available");
+        }
     }
 
     public void setPreviewCallback() {
@@ -64,17 +92,10 @@ public class CameraOld {
 
         camera.setParameters(cameraParam);
     }
-    public void openFrontCamera() throws BlackCatException{
-
-        if(camera == null){
-            throw new BlackCatException("Open camera failed.");
-        }
-    }
 
     public void startPreview(){
 
     }
-
 
     public void closeCamera(){
 

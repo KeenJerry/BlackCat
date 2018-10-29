@@ -32,4 +32,5 @@ public class Settings {
     public static final Boolean IS_USING_CAMERA2 = false;
 
     public static final int CAMERA_REQUEST = 10086;
+    public static final int CAMERA_NOT_AVAILABLE = -1;
 }
