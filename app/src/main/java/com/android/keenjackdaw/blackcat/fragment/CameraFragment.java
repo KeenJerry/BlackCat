@@ -1,8 +1,8 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -35,7 +35,8 @@ public class CameraFragment extends Fragment {
 
     private BlackCatRunnable detectionRunnable = null;
     private BlackCatRunnable recognitionRunnable = null;
-    Handler cameraHandler = null;
+    private boolean isBufferHasData = false;
+    // Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -44,7 +45,7 @@ public class CameraFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View v = null;
+        View v;
         citrusFaceManager = CitrusFaceManager.getInstance();
 
         if(Settings.IS_USING_CAMERA2){
@@ -107,15 +108,44 @@ public class CameraFragment extends Fragment {
                     } catch (BlackCatException e) {
                         e.printStackTrace();
                     }
-                    cameraOld.setPreviewCallback();
-                    cameraOld.startPreview(holder);
 
                     citrusFaceManager.setUpAppInfo();
                     try {
-                        citrusFaceManager.initCitrusFaceSDK();
+                        citrusFaceManager.initCitrusFaceSDK(cameraOld.getPreviewSize().width, cameraOld.getPreviewSize().height);
                     } catch (BlackCatException e) {
                         e.printStackTrace();
                     }
+
+                    Camera.PreviewCallback callback = new Camera.PreviewCallback() {
+                        @Override
+                        public void onPreviewFrame(byte[] data, Camera camera) {
+
+                            if(camera != null){
+
+                                if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
+                                    detectionRunnable.setRunning(true);
+                                    recognitionRunnable.setRunning(true);
+                                    new Thread(detectionRunnable).start();
+                                }
+
+                                citrusFaceManager.doFaceTrack();
+                                // TODO Draw rect in rect view
+
+                                camera.addCallbackBuffer(data);
+                            }
+                        }
+                    };
+
+                    cameraOld.setPreviewCallback(callback);
+                    cameraOld.startPreview(citrusFaceManager.getByteBuffers(), holder);
+                    try{
+                        cameraOld.startFaceDetection();
+                    }catch (BlackCatException e){
+                        e.printStackTrace();
+                    }
+
+                    setDetectionRunnable();
+                    setRecognitionRunnable();
                 }
 
                 @Override
@@ -130,13 +160,6 @@ public class CameraFragment extends Fragment {
             });
         }
         rectView = v.findViewById(R.id.rect_view);
-        // rectView.init();
-
-
-
-        // TODO Uncomment after debug
-        // setDetectionRunnable();
-        // setRecognitionRunnable();
 
         return v;
     }
@@ -151,7 +174,7 @@ public class CameraFragment extends Fragment {
                     try{
                         // TEST
                         // Thread.sleep(2000);
-
+                        Log.i(Settings.TAG, "in onPreviewFrame.");
                         setCurrentTime(System.currentTimeMillis());
                         int faceNum = citrusFaceManager.getFaceNum();
                         // TODO Delete below after debug

@@ -13,7 +13,6 @@ import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.ui.Camera2View;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 
 import java.io.IOException;
@@ -31,8 +30,8 @@ public class CameraOld {
 
     // FIXME I know it is deprecated, but I have to use this
     private Camera camera = null;
-    private Camera.PreviewCallback previewCallback = null;
     private Camera.Parameters cameraParam = null;
+    private Camera.Size previewSize = null;
     private int numOfCameras = -1;
     private int backCameraId = 0;
     private int frontCameraId = 0;
@@ -85,8 +84,9 @@ public class CameraOld {
         setCameraParam();
     }
 
-    public void setPreviewCallback() {
+    public void setPreviewCallback(Camera.PreviewCallback callback) {
         // TODO Complete definition
+        camera.setPreviewCallbackWithBuffer(callback);
     }
 
     private void setCameraParam(){
@@ -94,6 +94,7 @@ public class CameraOld {
         cameraParam.setPictureFormat(PixelFormat.JPEG);
         Size suitablePreviewSize = getSuitablePreviewSize();
         cameraParam.setPreviewSize(suitablePreviewSize.width, suitablePreviewSize.height);
+        previewSize =suitablePreviewSize;
 
         List<String> availableFocusMode = cameraParam.getSupportedFocusModes();
         if(availableFocusMode.contains("continuous-video")){
@@ -108,13 +109,19 @@ public class CameraOld {
         camera.setDisplayOrientation(90);
     }
 
-    public void startPreview(SurfaceHolder holder){
+    public void startPreview(byte[][] buffer, SurfaceHolder holder){
         try{
             camera.setPreviewDisplay(holder);
         }
         catch (IOException e){
             e.printStackTrace();
         }
+
+        int bufferNum = buffer.length;
+        for(int i = 0; i < bufferNum; i++){
+            camera.addCallbackBuffer(buffer[i]);
+        }
+
         camera.startPreview();
     }
 
@@ -122,8 +129,22 @@ public class CameraOld {
         camera.stopPreview();
     }
 
+    public void startFaceDetection() throws BlackCatException{
+        if(cameraParam.getMaxNumDetectedFaces() <= 0){
+            throw new BlackCatException("Face detection not supported.");
+        }
+        else
+        {
+            camera.startFaceDetection();
+        }
+    }
+
     public void closeCamera(){
         // TODO Complete definition
+    }
+
+    public Size getPreviewSize() {
+        return previewSize;
     }
 
     private Size getSuitablePreviewSize(){
@@ -148,6 +169,7 @@ public class CameraOld {
                 i++;
             }
         }
+        Log.i(Settings.TAG, "preview size width:" + supportedPreviewSizes.get(i).width + " height:" + supportedPreviewSizes.get(i).height);
         return supportedPreviewSizes.get(i);
     }
 
