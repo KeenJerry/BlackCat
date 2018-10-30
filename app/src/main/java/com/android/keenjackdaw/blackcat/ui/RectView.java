@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -41,6 +42,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         // TODO Complete definition.
+        init();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusableInTouchMode(true);
 
         canvas = surfaceHolder.lockCanvas();
+
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         paintAnchor = new Paint();

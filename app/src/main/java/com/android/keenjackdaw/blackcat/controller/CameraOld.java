@@ -5,6 +5,7 @@ import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
@@ -13,6 +14,7 @@ import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.Camera2View;
+import com.android.keenjackdaw.blackcat.ui.CameraView;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -75,8 +77,8 @@ public class CameraOld {
 
     }
 
-    public void openFrontCamera() throws BlackCatException{
-        camera = Camera.open(frontCameraId);
+    public void openBackCamera() throws BlackCatException{
+        camera = Camera.open(backCameraId);
         if(camera == null){
             throw new BlackCatException("Front camera not available");
         }
@@ -102,8 +104,8 @@ public class CameraOld {
         }
 
         cameraParam.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
-        cameraParam.setPreviewFpsRange(Settings.PREVIEW_FPS_MIN, Settings.PREVIEW_FPS_MAX);
         camera.setParameters(cameraParam);
+        camera.setDisplayOrientation(90);
     }
 
     public void startPreview(SurfaceHolder holder){
@@ -116,6 +118,10 @@ public class CameraOld {
         camera.startPreview();
     }
 
+    public void stopPreview(){
+        camera.stopPreview();
+    }
+
     public void closeCamera(){
         // TODO Complete definition
     }
@@ -125,9 +131,9 @@ public class CameraOld {
         Collections.sort(supportedPreviewSizes, new CameraOldComparator());
         int i = 0;
         // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
-        Camera2View cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+        CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
         for(Size s: supportedPreviewSizes){
-            if(s.height >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
+            if(s.width >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
                 break;
             }
             i++;

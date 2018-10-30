@@ -44,11 +44,11 @@ public class CameraFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View v = inflater.inflate(R.layout.fragment_camera2, container, false);
-
+        View v = null;
         citrusFaceManager = CitrusFaceManager.getInstance();
 
         if(Settings.IS_USING_CAMERA2){
+            v = inflater.inflate(R.layout.fragment_camera2, container, false);
             camera2View = v.findViewById(R.id.camera2_view);
             camera2View.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                 @Override
@@ -95,20 +95,27 @@ public class CameraFragment extends Fragment {
             });
         }
         else{
+            v = inflater.inflate(R.layout.fragment_camera, container, false);
             cameraView = v.findViewById(R.id.camera_view);
             cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(SurfaceHolder holder) {
                     cameraOld.setUpAppInfo();
-                    try{
+                    try {
                         cameraOld.initCamera();
-                        cameraOld.openFrontCamera();
-                    }
-                    catch (BlackCatException e){
+                        cameraOld.openBackCamera();
+                    } catch (BlackCatException e) {
                         e.printStackTrace();
                     }
                     cameraOld.setPreviewCallback();
                     cameraOld.startPreview(holder);
+
+                    citrusFaceManager.setUpAppInfo();
+                    try {
+                        citrusFaceManager.initCitrusFaceSDK();
+                    } catch (BlackCatException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -118,24 +125,18 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-
+                    cameraOld.stopPreview();
                 }
             });
         }
         rectView = v.findViewById(R.id.rect_view);
-        rectView.init();
+        // rectView.init();
 
-        citrusFaceManager.setUpAppInfo();
 
-        try{
-            citrusFaceManager.initCitrusFaceSDK();
-        }
-        catch (BlackCatException e){
-            e.printStackTrace();
-        }
 
-        setDetectionRunnable();
-        setRecognitionRunnable();
+        // TODO Uncomment after debug
+        // setDetectionRunnable();
+        // setRecognitionRunnable();
 
         return v;
     }

@@ -57,7 +57,7 @@ public class CitrusFaceManager {
             // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
             Camera2View camera2View = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera2_view);
             setBuffer(camera2View.getWidth(), camera2View.getHeight());
-            Log.i(Settings.TAG,  "cameraView width:" + camera2View.getWidth() + " cameraView width:" + camera2View.getHeight());
+            Log.i(Settings.TAG,  "cameraView width:" + camera2View.getWidth() + " cameraView height:" + camera2View.getHeight());
 
             citrusFaceSDK.SetSizeROIWithBuffer(
                     camera2View.getWidth(),
