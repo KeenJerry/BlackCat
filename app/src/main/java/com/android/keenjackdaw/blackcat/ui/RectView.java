@@ -84,6 +84,9 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         paintFaceRect.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
     }
 
+    public void lockCanvas() {
+        surfaceHolder.lockCanvas();
+    }
     public void releaseCanvas(){
         if (canvas != null){
             surfaceHolder.unlockCanvasAndPost(canvas);

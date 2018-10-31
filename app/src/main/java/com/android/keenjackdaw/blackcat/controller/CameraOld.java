@@ -185,4 +185,7 @@ public class CameraOld {
         }
     }
 
+    public int getBackCameraId() {
+        return backCameraId;
+    }
 }

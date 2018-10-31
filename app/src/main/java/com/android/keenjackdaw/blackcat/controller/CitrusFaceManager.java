@@ -2,18 +2,19 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 import android.util.Pair;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
+import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class CitrusFaceManager {
     private CitrusFaceManager() {}
@@ -23,6 +24,7 @@ public class CitrusFaceManager {
     private CameraActivity cameraActivity = null;
     private Context appContext = null;
     private CitrusFaceSDK citrusFaceSDK = null;
+    private List<String> userProfile = null;
     private static final TimeRange timeRange = new TimeRange();
 
     @Contract(pure = true)
@@ -161,6 +163,68 @@ public class CitrusFaceManager {
             return new Pair<>(recognizeResult, id);
         }
         return new Pair<>(null, null);
+    }
+
+    public void drawRect(RectView rectView){
+
+        rectView.lockCanvas();
+
+        if(citrusFaceSDK.GetResFaceNum() > 0) {
+            int faceNumRecognized = citrusFaceSDK.GetResListNum();
+            for (int i = 0; i < faceNumRecognized; ++i) {
+                if (citrusFaceSDK.GetResIsused(i)) {
+                    int trackId = citrusFaceSDK.GetResTrackid(i);
+                    float[] rectBox = citrusFaceSDK.GetResBBox(i);
+                    // TODO Add frontend and backend judgement.
+
+                    float left = 1.0f - rectBox[2];
+                    float right = 1.0f - rectBox[0];
+                    rectBox[0] = left;
+                    rectBox[2] = right;
+
+                    int id = citrusFaceSDK.GetResId(i);
+                    int isNewOne = citrusFaceSDK.GetResIsNewone(i);
+                    float score = (int) (citrusFaceSDK.GetResScore(i) * 100) / 100.f;
+                    int age = (int) citrusFaceSDK.GetResAge(i);
+                    int childMark = citrusFaceSDK.GetResChild(i);
+                    int genderMark = citrusFaceSDK.GetResGender(i);
+
+                    String child = "Unknown";
+                    String gender = "Unknown";
+
+                    if(childMark == 0){
+                        child = "adult";
+                    }
+                    else{
+                        if(childMark == 1) {
+                            child = "child";
+                        }
+                    }
+
+                    if(genderMark == 0){
+                        gender = "adult";
+                    }
+                    else{
+                        if(genderMark == 1) {
+                            gender = "child";
+                        }
+                    }
+
+                    String result = "Unknown";
+
+                    if (id >= 0) {
+                        if(userProfile == null)
+                            result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
+                        else
+                            result = trackId + ":" + userProfile.get(id);
+                    } else {
+                        result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
+                    }
+
+                    // TODO Complete draw rect
+                }
+            }
+        }
     }
 
     static class TimeRange {

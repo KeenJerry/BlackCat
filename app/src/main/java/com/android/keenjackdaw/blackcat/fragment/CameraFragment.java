@@ -145,6 +145,8 @@ public class CameraFragment extends Fragment {
 
                     setDetectionRunnable();
                     setRecognitionRunnable();
+
+
                 }
 
                 @Override
