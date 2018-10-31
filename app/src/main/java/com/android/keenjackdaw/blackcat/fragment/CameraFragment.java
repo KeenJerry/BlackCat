@@ -88,8 +88,7 @@ public class CameraFragment extends Fragment {
                         recognitionRunnable.setRunning(true);
                         new Thread(detectionRunnable).start();
                         new Thread(recognitionRunnable).start();
-                        // TODO Uncomment after camera2 is fully supported.
-                        // new Thread(recognitionRunnable).start();
+                        // TODO Delete this todo task until camera2 is fully supported.
                     }
 
                 }
@@ -190,8 +189,6 @@ public class CameraFragment extends Fragment {
                         else{
                             Thread.sleep(500);
                         }
-                        // TODO Delete below after debug
-                        Log.i(Settings.TAG, "buffer changed:");
                     }
                     catch (InterruptedException e){
                         e.printStackTrace();
@@ -209,7 +206,6 @@ public class CameraFragment extends Fragment {
                     try{
 
                         // Thread.sleep(2000);
-                        // TODO Delete the above code before implementing any further, it's a trick to make it correct.
                         for(int i = 0; i < faceNumUnrecognized; i++){
                             Pair<Integer, Integer> result = citrusFaceManager.doFaceRecognition(i);
                             if (result.first == 0) {

@@ -85,7 +85,6 @@ public class CameraOld {
     }
 
     public void setPreviewCallback(Camera.PreviewCallback callback) {
-        // TODO Complete definition
         camera.setPreviewCallbackWithBuffer(callback);
     }
 

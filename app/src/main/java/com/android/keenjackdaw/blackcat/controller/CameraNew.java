@@ -116,8 +116,6 @@ public class CameraNew {
                     for(int i = 0; i < Settings.IMAGE_CHANNEL_NUM; i++){
                         data[i] = new byte[img.getPlanes()[i].getBuffer().remaining()];
                         img.getPlanes()[i].getBuffer().get(data[i]);
-                        // TODO Delete below after debug
-                        Log.i(Settings.TAG, "data length:" + data[i].length);
                         // Log.i(Settings.TAG, "image data:" + Arrays.toString(data[i]));
                     }
 
