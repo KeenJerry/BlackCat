@@ -14,7 +14,9 @@ import android.view.SurfaceView;
 
 import com.android.keenjackdaw.blackcat.Settings;
 
-public class RectView extends SurfaceView implements SurfaceHolder.Callback {
+import java.util.Collections;
+
+public class RectView extends SurfaceView{
 
     private SurfaceHolder surfaceHolder = null;
     private Canvas canvas = null;
@@ -42,37 +44,37 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        init();
-
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-        //TODO Complete definition.
-        viewHeight = height;
-        viewWidth = width;
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        //TODO Complete definition.
-    }
-
     public void init(){
         surfaceHolder = getHolder();
-        surfaceHolder.addCallback(this);
+        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
+                //TODO Complete definition.
+                viewHeight = height;
+                viewWidth = width;
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                //TODO Complete definition.
+            }
+        });
+
+        if(surfaceHolder == null){
+            Log.i(Settings.TAG, "surface holder is null in init");
+        }
+
         surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 
         setZOrderOnTop(true);
         setFocusable(true);
         setKeepScreenOn(true);
         setFocusableInTouchMode(true);
-
-        canvas = surfaceHolder.lockCanvas();
-
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         paintAnchor = new Paint();
         facePainter = new Paint();
@@ -97,9 +99,12 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void drawRect(float[] rect, String userProfile){
         if(canvas != null){
+            // TODO Delete below after debug
+            Log.i(Settings.TAG, "draw Rect");
             facePainter.setColor(Color.YELLOW);
             faceRect.set((int) (rect[0] * viewWidth), (int) (rect[1] * viewHeight),
                     (int) (rect[2] * viewWidth), (int) (rect[3] * viewHeight));
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             canvas.drawRect(faceRect, facePainter);
         }
     }

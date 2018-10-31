@@ -161,6 +161,7 @@ public class CameraFragment extends Fragment {
             });
         }
         rectView = v.findViewById(R.id.rect_view);
+        rectView.init();
 
         return v;
     }

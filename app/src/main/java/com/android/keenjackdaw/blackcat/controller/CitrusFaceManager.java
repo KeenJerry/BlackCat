@@ -2,6 +2,7 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 import android.util.Pair;
 
 import com.android.keenjackdaw.blackcat.R;
@@ -172,8 +173,10 @@ public class CitrusFaceManager {
 
         if(citrusFaceSDK.GetResFaceNum() > 0) {
             int faceNumRecognized = citrusFaceSDK.GetResListNum();
+            // TODO Delete below after debug
+            Log.i(Settings.TAG, "faceNumRecognized:" + faceNumRecognized);
             for (int i = 0; i < faceNumRecognized; ++i) {
-                if (citrusFaceSDK.GetResIsused(i)) {
+               // if (citrusFaceSDK.GetResIsused(i)) {
                     int trackId = citrusFaceSDK.GetResTrackid(i);
                     float[] rectBox = citrusFaceSDK.GetResBBox(i);
                     // TODO Add frontend and backend judgement.
@@ -224,7 +227,7 @@ public class CitrusFaceManager {
 
                     rectView.drawRect(rectBox, result);
                 }
-            }
+            //}
         }
         rectView.releaseCanvas();
     }
