@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
@@ -35,7 +36,8 @@ public class CameraFragment extends Fragment {
 
     private BlackCatRunnable detectionRunnable = null;
     private BlackCatRunnable recognitionRunnable = null;
-    private boolean isBufferHasData = false;
+
+    private int faceNumUnrecognized = 0;
     // Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -85,12 +87,10 @@ public class CameraFragment extends Fragment {
                         detectionRunnable.setRunning(true);
                         recognitionRunnable.setRunning(true);
                         new Thread(detectionRunnable).start();
-                        // TODO Uncomment after completed.
+                        new Thread(recognitionRunnable).start();
+                        // TODO Uncomment after camera2 is fully supported.
                         // new Thread(recognitionRunnable).start();
                     }
-
-                    // TODO Delete below after debug
-                    // Log.i(Settings.TAG, Arrays.toString(citrusFaceManager.getByteBuffers()[0]));
 
                 }
             });
@@ -129,7 +129,6 @@ public class CameraFragment extends Fragment {
                                 }
 
                                 citrusFaceManager.doFaceTrack();
-                                // TODO Draw rect in rect view
 
                                 camera.addCallbackBuffer(data);
                             }
@@ -208,6 +207,12 @@ public class CameraFragment extends Fragment {
 
                         // Thread.sleep(2000);
                         // TODO Delete the above code before implementing any further, it's a trick to make it correct.
+                        for(int i = 0; i < faceNumUnrecognized; i++){
+                            Pair<Integer, Integer> result = citrusFaceManager.doFaceRecognition(i);
+                            if (result.first == 0) {
+                                Log.i(Settings.TAG, "Recog " + i + ", id = " + result.second);
+                            }
+                        }
                         throw new InterruptedException();
                     }
                     catch (InterruptedException e){

@@ -2,6 +2,8 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
+import android.util.Pair;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
@@ -139,6 +141,26 @@ public class CitrusFaceManager {
 
     public byte[][] getByteBuffers() {
         return byteBuffers;
+    }
+
+    public Pair<Integer, Integer> doFaceRecognition(int index){
+        if(citrusFaceSDK.GetResIsused(index)){
+
+            int recognizeResult;
+
+            if(citrusFaceSDK.GetResRecogTryCnt(index) == 0){
+                recognizeResult = citrusFaceSDK.FaceRecogWithAttribute(index);
+            }
+            else
+            {
+                recognizeResult = citrusFaceSDK.FaceRecog(index);
+            }
+
+            int id = citrusFaceSDK.GetResId(index);
+
+            return new Pair<>(recognizeResult, id);
+        }
+        return new Pair<>(null, null);
     }
 
     static class TimeRange {
