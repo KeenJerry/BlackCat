@@ -19,10 +19,13 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder surfaceHolder = null;
     private Canvas canvas = null;
 
-    private Paint paintFaceRect = null;
+    private Paint facePainter = null;
     private Paint paintAnchor   = null;
 
     private Rect faceRect = null;
+
+    private float viewWidth;
+    private float viewHeight;
 
     public RectView(Context context) {
         super(context);
@@ -41,13 +44,15 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // TODO Complete definition.
         init();
+
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
         //TODO Complete definition.
+        viewHeight = height;
+        viewWidth = width;
     }
 
     @Override
@@ -70,7 +75,7 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         paintAnchor = new Paint();
-        paintFaceRect = new Paint();
+        facePainter = new Paint();
 
         faceRect = new Rect();
 
@@ -79,14 +84,26 @@ public class RectView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setPaintParam(){
-        paintFaceRect.setStyle(Paint.Style.STROKE);
-        paintFaceRect.setColor(Color.GREEN);
-        paintFaceRect.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
+        facePainter.setStyle(Paint.Style.STROKE);
+        facePainter.setColor(Color.GREEN);
+        facePainter.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
     }
 
     public void lockCanvas() {
-        surfaceHolder.lockCanvas();
+        if(surfaceHolder != null){
+            canvas = surfaceHolder.lockCanvas();
+        }
     }
+
+    public void drawRect(float[] rect, String userProfile){
+        if(canvas != null){
+            facePainter.setColor(Color.YELLOW);
+            faceRect.set((int) (rect[0] * viewWidth), (int) (rect[1] * viewHeight),
+                    (int) (rect[2] * viewWidth), (int) (rect[3] * viewHeight));
+            canvas.drawRect(faceRect, facePainter);
+        }
+    }
+
     public void releaseCanvas(){
         if (canvas != null){
             surfaceHolder.unlockCanvasAndPost(canvas);

@@ -129,7 +129,8 @@ public class CameraFragment extends Fragment {
                                 }
 
                                 citrusFaceManager.doFaceTrack();
-
+                                citrusFaceManager.drawRect(rectView);
+                                
                                 camera.addCallbackBuffer(data);
                             }
                         }

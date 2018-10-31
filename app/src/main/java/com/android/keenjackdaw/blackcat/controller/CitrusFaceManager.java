@@ -210,7 +210,7 @@ public class CitrusFaceManager {
                         }
                     }
 
-                    String result = "Unknown";
+                    String result;
 
                     if (id >= 0) {
                         if(userProfile == null)
@@ -222,9 +222,11 @@ public class CitrusFaceManager {
                     }
 
                     // TODO Complete draw rect
+                    rectView.drawRect(rectBox, result);
                 }
             }
         }
+        rectView.releaseCanvas();
     }
 
     static class TimeRange {
