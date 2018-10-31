@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Pair;
 
+import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
@@ -87,7 +88,7 @@ public class CitrusFaceManager {
         }
 
         // FIXME it's not an error orz...
-        String dbPath = "/sdcard/Citrus/dataset/demo/face.db";
+        String dbPath = cameraActivity.getString(R.string.db_path);
         Settings.ExternalStorageState state = checkExternalStorage();
         if(state != Settings.ExternalStorageState.All_ALLOWED){
             throw new BlackCatException("External storage access not allowed or only allow read.");
