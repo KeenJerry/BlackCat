@@ -222,7 +222,6 @@ public class CitrusFaceManager {
                         result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                     }
 
-                    // TODO Complete draw rect
                     rectView.drawRect(rectBox, result);
                 }
             }
