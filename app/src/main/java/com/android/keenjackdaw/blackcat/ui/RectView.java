@@ -97,6 +97,12 @@ public class RectView extends SurfaceView{
         }
     }
 
+    public void clearCanvas(){
+        if(canvas != null){
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        }
+    }
+
     public void drawRect(float[] rect, String userProfile){
         if(canvas != null){
             // TODO Delete below after debug
@@ -104,7 +110,6 @@ public class RectView extends SurfaceView{
             facePainter.setColor(Color.YELLOW);
             faceRect.set((int) (rect[0] * viewWidth), (int) (rect[1] * viewHeight),
                     (int) (rect[2] * viewWidth), (int) (rect[3] * viewHeight));
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             canvas.drawRect(faceRect, facePainter);
         }
     }

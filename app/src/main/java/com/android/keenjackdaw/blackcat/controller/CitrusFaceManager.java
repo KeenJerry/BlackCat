@@ -170,6 +170,7 @@ public class CitrusFaceManager {
     public void drawRect(RectView rectView){
 
         rectView.lockCanvas();
+        rectView.clearCanvas();
 
         if(citrusFaceSDK.GetResFaceNum() > 0) {
             int faceNumRecognized = citrusFaceSDK.GetResListNum();
