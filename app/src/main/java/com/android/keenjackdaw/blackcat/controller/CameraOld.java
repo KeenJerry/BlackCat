@@ -156,9 +156,14 @@ public class CameraOld {
         List<Size> supportedPreviewSizes = cameraParam.getSupportedPreviewSizes();
         Collections.sort(supportedPreviewSizes, new CameraOldComparator());
         int i = 0;
+
         // FIXME It's not an error too... Because CameraView has already initialized before calling findViewBtId
         CameraView cameraView = cameraActivity.getFragmentContainer().getView().findViewById(R.id.camera_view);
+        // TODO Delete after debug
+        Log.i(Settings.TAG, "Camera view size height:" + cameraView.getHeight() + " width:" + cameraView.getWidth());
         for(Size s: supportedPreviewSizes){
+            // TODO Delete after debug
+            Log.i(Settings.TAG, "Size now height:" + s.height + " width:" + s.width);
             if(s.width >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
                 break;
             }
@@ -166,6 +171,8 @@ public class CameraOld {
         }
 
         if(i == supportedPreviewSizes.size()){
+            // TODO Delete after debug
+            Log.i(Settings.TAG, "No matching size.");
             i = 0;
             for(Size s: supportedPreviewSizes){
                 if(s.height >= cameraView.getHeight()){

@@ -32,5 +32,5 @@ public class Settings {
     public static final int PREVIEW_FPS_MIN = 60;
     public static final int PREVIEW_FPS_MAX = 90;
     public static final float ASPECT_TOLERANCE = 0.1f;
-    public static final float ASPECT_RATIO = 0.75f;
+    public static final float ASPECT_RATIO = 0.6f;
 }
