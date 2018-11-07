@@ -177,60 +177,60 @@ public class CitrusFaceManager {
             // TODO Delete below after debug
             Log.i(Settings.TAG, "faceNumRecognized:" + faceNumRecognized);
             for (int i = 0; i < faceNumRecognized; ++i) {
-               // if (citrusFaceSDK.GetResIsused(i)) {
-                int trackId = citrusFaceSDK.GetResTrackid(i);
-                float[] rectBox = citrusFaceSDK.GetResBBox(i);
-                // TODO Add frontend and backend judgement.
+                if (citrusFaceSDK.GetResIsused(i)) {
+                    int trackId = citrusFaceSDK.GetResTrackid(i);
+                    float[] rectBox = citrusFaceSDK.GetResBBox(i);
+                    // TODO Add frontend and backend judgement.
 
-                // float left = 1.0f - rectBox[2];
-                // float right = 1.0f - rectBox[0];
-                float left = rectBox[2];
-                float right = rectBox[0];
-                rectBox[0] = left;
-                rectBox[2] = right;
+                    // float left = 1.0f - rectBox[2];
+                    // float right = 1.0f - rectBox[0];
+                    float left = rectBox[2];
+                    float right = rectBox[0];
+                    rectBox[0] = left;
+                    rectBox[2] = right;
 
-                int id = citrusFaceSDK.GetResId(i);
-                int isNewOne = citrusFaceSDK.GetResIsNewone(i);
-                float score = (int) (citrusFaceSDK.GetResScore(i) * 100) / 100.f;
-                int age = (int) citrusFaceSDK.GetResAge(i);
-                int childMark = citrusFaceSDK.GetResChild(i);
-                int genderMark = citrusFaceSDK.GetResGender(i);
+                    int id = citrusFaceSDK.GetResId(i);
+                    int isNewOne = citrusFaceSDK.GetResIsNewone(i);
+                    float score = (int) (citrusFaceSDK.GetResScore(i) * 100) / 100.f;
+                    int age = (int) citrusFaceSDK.GetResAge(i);
+                    int childMark = citrusFaceSDK.GetResChild(i);
+                    int genderMark = citrusFaceSDK.GetResGender(i);
 
-                String child = "Unknown";
-                String gender = "Unknown";
+                    String child = "Unknown";
+                    String gender = "Unknown";
 
-                if(childMark == 0){
-                    child = "adult";
-                }
-                else{
-                    if(childMark == 1) {
-                        child = "child";
+                    if(childMark == 0){
+                        child = "adult";
                     }
-                }
-
-                if(genderMark == 0){
-                    gender = "adult";
-                }
-                else{
-                    if(genderMark == 1) {
-                        gender = "child";
+                    else{
+                        if(childMark == 1) {
+                            child = "child";
+                        }
                     }
+
+                    if(genderMark == 0){
+                        gender = "adult";
+                    }
+                    else{
+                        if(genderMark == 1) {
+                            gender = "child";
+                        }
+                    }
+
+                    String result;
+
+                    if (id >= 0) {
+                        if(userProfile == null)
+                            result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
+                        else
+                            result = trackId + ":" + userProfile.get(id);
+                    } else {
+                        result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
+                    }
+
+                    rectView.drawRect(rectBox, result);
                 }
-
-                String result;
-
-                if (id >= 0) {
-                    if(userProfile == null)
-                        result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
-                    else
-                        result = trackId + ":" + userProfile.get(id);
-                } else {
-                    result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
-                }
-
-                rectView.drawRect(rectBox, result);
             }
-            //}
         }
         rectView.releaseCanvas();
     }
