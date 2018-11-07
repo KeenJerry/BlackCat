@@ -33,7 +33,7 @@
         <activity
             android:name=".activity.CameraActivity"
             android:theme="@style/MainTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
         </activity>
     </application>
 

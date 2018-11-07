@@ -1,6 +1,7 @@
 package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -105,7 +106,12 @@ public class CameraOld {
 
         cameraParam.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
         camera.setParameters(cameraParam);
-        camera.setDisplayOrientation(90);
+        if(cameraActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            camera.setDisplayOrientation(0);
+        }
+        else{
+            camera.setDisplayOrientation(90);
+        }
     }
 
     public void startPreview(byte[][] buffer, SurfaceHolder holder){
