@@ -19,7 +19,7 @@ public class CameraActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        fragmentContainer = fragmentManager.findFragmentById(R.id.fragment_container);
+        fragmentContainer = fragmentManager.findFragmentById(R.id.camera_fragment_container);
         if(fragmentContainer == null){
             fragmentContainer = new CameraFragment();
             fragmentManager.beginTransaction()

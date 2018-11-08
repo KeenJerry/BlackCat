@@ -4,4 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="camera_fragment">Camera fragment</string>
     <string name="db_path">/sdcard/Citrus/dataset/demo/face.db</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
