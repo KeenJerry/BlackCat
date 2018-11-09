@@ -14,8 +14,6 @@ import java.util.List;
 
 public class PictureProvider {
 
-    private Cursor cursor = null;
-
     private static List<PictureBucket> pictureBucketList = null;
 
     private static HashMap<String, PictureBucket> pictureBucketMap = null;
@@ -36,7 +34,7 @@ public class PictureProvider {
     public void loadPictureData(Context context) throws BlackCatException{
 
         pictureBucketList.clear();
-        cursor = context.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
                 Settings.QUERY_URI,
                 Settings.PROJECTION,
                 Settings.SELECTION,
