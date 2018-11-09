@@ -11,13 +11,13 @@
         android:layout_height="match_parent">
 
         <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="530dp"
             android:id="@+id/picture_grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alignmentMode="alignMargins"
             android:columnCount="4"
-            android:rowCount="4"
             android:orientation="horizontal"
-            android:alignmentMode="alignMargins">
+            android:rowCount="4">
 
         </GridLayout>
 

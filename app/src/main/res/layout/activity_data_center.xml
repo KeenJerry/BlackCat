@@ -7,9 +7,33 @@
     tools:context=".activity.DataCenterActivity">
 
     <FrameLayout
+        android:id="@+id/data_center_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/data_center_fragment_container">
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent">
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/data_center_button_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/data_center_fragment_container">
+
+        <Button
+            android:id="@+id/data_center_button_add"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="?android:buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/data_center_button_delete"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            style="?android:buttonBarButtonStyle" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
