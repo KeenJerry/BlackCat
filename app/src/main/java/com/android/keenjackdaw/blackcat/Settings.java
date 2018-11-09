@@ -1,5 +1,8 @@
 package com.android.keenjackdaw.blackcat;
 
+import android.net.Uri;
+import android.provider.MediaStore;
+
 public class Settings {
     private Settings(){}
 
@@ -33,4 +36,11 @@ public class Settings {
     public static final int PREVIEW_FPS_MAX = 90;
     public static final float ASPECT_TOLERANCE = 0.1f;
     public static final float ASPECT_RATIO = 0.6f;
+
+    public static final Uri QUERY_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public static final String[] PROJECTION = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME};
+    public static final String SELECTION = null;
+    public static final String[] SELECTION_ARGS = null;
+    public static final String QUERY_ORDER = MediaStore.Images.Media.DATE_TAKEN + " DESC ";
+
 }

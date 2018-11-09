@@ -11,4 +11,11 @@
     <declare-styleable name="CameraView">
 
     </declare-styleable>
+
+    <declare-styleable name="PictureView">
+        <attr name="width" format="integer"/>
+        <attr name="height" format="integer"/>
+        <attr name="unactivated_icon" format="reference"/>
+        <attr name="activated_icon" format="reference"/>
+    </declare-styleable>
 </resources>
