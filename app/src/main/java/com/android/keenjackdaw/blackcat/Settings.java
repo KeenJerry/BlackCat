@@ -38,7 +38,12 @@ public class Settings {
     public static final float ASPECT_RATIO = 0.6f;
 
     public static final Uri QUERY_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    public static final String[] PROJECTION = {MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME};
+    public static final String[] PROJECTION = {
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media.BUCKET_ID,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+    };
     public static final String SELECTION = null;
     public static final String[] SELECTION_ARGS = null;
     public static final String QUERY_ORDER = MediaStore.Images.Media.DATE_TAKEN + " DESC ";

@@ -21,4 +21,10 @@ public class Picture {
     public PictureBucket getPictureBucket() {
         return pictureBucket;
     }
+
+    public Picture(String pictureId, String picturePath, PictureBucket pictureBucket) {
+        this.pictureId = pictureId;
+        this.picturePath = picturePath;
+        this.pictureBucket = pictureBucket;
+    }
 }
