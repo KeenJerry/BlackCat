@@ -1,5 +1,6 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.SurfaceHolder;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.android.keenjackdaw.blackcat.Settings;
+import com.android.keenjackdaw.blackcat.activity.DataCenterActivity;
 import com.android.keenjackdaw.blackcat.controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.controller.CameraOld;
@@ -32,7 +35,9 @@ public class CameraFragment extends Fragment {
     Camera2View camera2View = null;
     CameraView cameraView = null;
     RectView rectView = null;
+    ImageButton addPictureButton = null;
     CitrusFaceManager citrusFaceManager = null;
+
 
     private BlackCatRunnable detectionRunnable = null;
     private BlackCatRunnable recognitionRunnable = null;
@@ -158,6 +163,15 @@ public class CameraFragment extends Fragment {
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
                     cameraOld.stopPreview();
+                }
+            });
+            
+            addPictureButton = v.findViewById(R.id.add_picture_button);
+            addPictureButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), DataCenterActivity.class);
+                    startActivity(intent);
                 }
             });
         }
