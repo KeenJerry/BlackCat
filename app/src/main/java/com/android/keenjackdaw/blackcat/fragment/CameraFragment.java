@@ -165,7 +165,7 @@ public class CameraFragment extends Fragment {
                     cameraOld.stopPreview();
                 }
             });
-            
+
             addPictureButton = v.findViewById(R.id.add_picture_button);
             addPictureButton.setOnClickListener(new View.OnClickListener() {
                 @Override
