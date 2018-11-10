@@ -145,7 +145,8 @@ public class CameraOld {
     }
 
     public void closeCamera(){
-        // TODO Complete definition
+        stopPreview();
+        camera.release();
     }
 
     public Size getPreviewSize() {

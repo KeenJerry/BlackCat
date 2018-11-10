@@ -171,6 +171,10 @@ public class CameraFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), DataCenterActivity.class);
+                    detectionRunnable.setRunning(false);
+                    recognitionRunnable.setRunning(false);
+                    citrusFaceManager.destroySDK();
+                    cameraOld.closeCamera();
                     startActivity(intent);
                 }
             });

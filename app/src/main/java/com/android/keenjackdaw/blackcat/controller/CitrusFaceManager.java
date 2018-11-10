@@ -235,6 +235,12 @@ public class CitrusFaceManager {
         rectView.releaseCanvas();
     }
 
+    public void destroySDK(){
+        if(citrusFaceSDK != null){
+            citrusFaceSDK.Destroy();
+        }
+    }
+
     static class TimeRange {
         private long frameCount;
         private long frameCurTime;
