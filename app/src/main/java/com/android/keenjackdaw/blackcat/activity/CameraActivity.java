@@ -23,7 +23,7 @@ public class CameraActivity extends AppCompatActivity {
         if(fragmentContainer == null){
             fragmentContainer = new CameraFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, fragmentContainer)
+                    .add(R.id.camera_fragment_container, fragmentContainer)
                     .commit();
         }
 
