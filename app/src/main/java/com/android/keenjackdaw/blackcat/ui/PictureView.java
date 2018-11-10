@@ -35,11 +35,23 @@ public class PictureView extends View {
         init(attrs, defStyleAttr);
     }
 
-    public void init(AttributeSet attrs, int defStyleAttr){
+    private void init(AttributeSet attrs, int defStyleAttr){
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PictureView, defStyleAttr, 0);
         activatedIcon = a.getDrawable(R.styleable.PictureView_activated_icon);
         unactivatedIcon = a.getDrawable(R.styleable.PictureView_unactivated_icon);
         a.recycle();
+    }
+
+    public void setActivatedIcon(Drawable activatedIcon) {
+        this.activatedIcon = activatedIcon;
+    }
+
+    public void setUnactivatedIcon(Drawable unactivatedIcon) {
+        this.unactivatedIcon = unactivatedIcon;
+    }
+
+    public void setPicture(Bitmap picture) {
+        this.picture = picture;
     }
 
     public void setPictureUrl(String pictureUrl) {
