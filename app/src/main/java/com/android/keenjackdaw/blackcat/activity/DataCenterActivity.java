@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.fragment.CameraFragment;
+import com.android.keenjackdaw.blackcat.fragment.DataCenterFragment;
 
 public class DataCenterActivity extends AppCompatActivity {
 
@@ -21,9 +22,9 @@ public class DataCenterActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        fragmentContainer = fragmentManager.findFragmentById(R.id.camera_fragment_container);
+        fragmentContainer = fragmentManager.findFragmentById(R.id.data_center_fragment_container);
         if(fragmentContainer == null){
-            fragmentContainer = new CameraFragment();
+            fragmentContainer = new DataCenterFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.data_center_fragment_container, fragmentContainer)
                     .commit();

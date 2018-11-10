@@ -29,11 +29,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.CameraActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/MainTheme"></activity>
-        <activity android:name=".activity.DataCenterActivity"></activity>
+            android:theme="@style/MainTheme">
+        </activity>
+
+        <activity
+            android:name=".activity.DataCenterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MainTheme">
+        </activity>
+
     </application>
 
 </manifest>

@@ -9,9 +9,7 @@
     <FrameLayout
         android:id="@+id/data_center_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent">
     </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

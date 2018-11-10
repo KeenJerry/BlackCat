@@ -27,22 +27,26 @@
         android:id="@+id/data_center_button_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/data_center_button_add"
             style="?android:buttonBarButtonStyle"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:layout_weight="1"
+            android:background="@android:color/holo_green_dark"
             android:text="@string/data_center_add_button"
             android:textSize="20sp" />
 
         <Button
             android:id="@+id/data_center_button_delete"
             style="?android:buttonBarButtonStyle"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:layout_weight="1"
+            android:background="@android:color/holo_red_dark"
             android:text="@string/data_center_delete_button"
             android:textSize="20sp" />
 
