@@ -2,6 +2,8 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.util.LruCache;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
@@ -17,6 +19,8 @@ public class PictureProvider {
     private static List<PictureBucket> pictureBucketList = null;
 
     private static HashMap<String, PictureBucket> pictureBucketMap = null;
+
+    private LruCache<String, Bitmap> pictureCache = null;
 
     private PictureProvider() { }
 

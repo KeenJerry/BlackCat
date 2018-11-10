@@ -17,7 +17,7 @@ import com.android.keenjackdaw.blackcat.R;
 public class PictureView extends View {
 
     private Drawable activatedIcon = null;
-    private Drawable unactivatedIcon = null;
+    private Drawable inactivatedIcon = null;
     private String pictureUrl = null;
     private Bitmap picture = null;
 
@@ -38,7 +38,7 @@ public class PictureView extends View {
     private void init(AttributeSet attrs, int defStyleAttr){
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.PictureView, defStyleAttr, 0);
         activatedIcon = a.getDrawable(R.styleable.PictureView_activated_icon);
-        unactivatedIcon = a.getDrawable(R.styleable.PictureView_unactivated_icon);
+        inactivatedIcon = a.getDrawable(R.styleable.PictureView_unactivated_icon);
         a.recycle();
     }
 
@@ -47,15 +47,12 @@ public class PictureView extends View {
     }
 
     public void setUnactivatedIcon(Drawable unactivatedIcon) {
-        this.unactivatedIcon = unactivatedIcon;
-    }
-
-    public void setPicture(Bitmap picture) {
-        this.picture = picture;
+        this.inactivatedIcon = unactivatedIcon;
     }
 
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
+        
     }
 
     public void show(){
