@@ -39,38 +39,7 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
 
         Picture picture = getItem(position);
         Log.i(Settings.TAG, "picture id = " + picture.getPictureId());
-//        PictureLayout pictureLayout;
-//        if(convertView == null){
-//            pictureLayout = new PictureLayout(getContext());
-//        }
-//        else
-//        {
-//            pictureLayout = (PictureLayout)convertView;
-//        }
-//
-//        Log.i(Settings.TAG, "pictureLayout :" + pictureLayout.getLayoutParams());
-//        ImageView pictureView = new ImageView(getContext());
-//        RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.MATCH_PARENT
-//        );
-//        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-//        pictureView.setLayoutParams(layoutParams);
-//
-//        ImageView iconView = new ImageView(getContext());
-//        iconView.setLayoutParams(layoutParams);
-//        iconView.setImageResource(R.drawable.ic_launcher_background);
-//
-//        File pictureThumbnail = new File(picture.getThumbnail());
-//        Log.i(Settings.TAG, "picture thumbnail = " + picture.getThumbnail());
-//        pictureView.setImageBitmap(BitmapFactory.decodeFile(pictureThumbnail.getAbsolutePath()));
-//        pictureLayout.setId(picture.getPictureId());
-//
-//
-//        pictureLayout.setPictureView(pictureView);
-//        pictureLayout.setIconView(iconView);
-//
-//        return pictureLayout;
+
         View view;
         if(convertView == null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.picture, null);
@@ -82,7 +51,7 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
 
         Bitmap thumbnail;
 
-//        Log.i(Settings.TAG, "picture thumbnail = " + picture.getThumbnail());
+
         if(PictureProvider.getInstance().hasPictureInCache(picture.getThumbnail())){
             Log.i(Settings.TAG, "not has bitmap in cache");
             thumbnail = PictureProvider.getInstance().getCachedBitmap(picture.getThumbnail());

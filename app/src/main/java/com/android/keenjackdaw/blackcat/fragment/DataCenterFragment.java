@@ -83,7 +83,7 @@ public class DataCenterFragment extends Fragment {
         }
 
         try{
-            pictureProvider.loadPictureData(getContext());
+            pictureProvider.loadPictureData(context);
         }catch (BlackCatException e){
             e.printStackTrace();
         }
@@ -96,9 +96,6 @@ public class DataCenterFragment extends Fragment {
             Collections.addAll(pictures, picturesInBucket);
         }
         Log.i(Settings.TAG, "pictures id: " + pictures.get(0).getPictureId());
-        Log.i(Settings.TAG, "pictures id: " + pictures.get(1).getPictureId());
-        Log.i(Settings.TAG, "pictures id: " + pictures.get(2).getPictureId());
-        Log.i(Settings.TAG, "pictures id: " + pictures.get(3).getPictureId());
 
         GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(context, 0, pictures.toArray(new Picture[pictures.size()]), gridView);
         gridView.setAdapter(gridViewAdaptor);

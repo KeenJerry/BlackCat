@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.LruCache;
-import android.view.View;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
@@ -15,7 +14,6 @@ import com.android.keenjackdaw.blackcat.utils.PictureBucket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PictureProvider{
 
@@ -59,15 +57,17 @@ public class PictureProvider{
         if(cursor == null){
             throw new BlackCatException();
         }
-        else{
-            if(cursor.moveToFirst()){
+        else {
+            if (cursor.moveToFirst()) {
+
                 int tempPictureId = cursor.getColumnIndex(Settings.PROJECTION[0]);
                 int tempPicturePath = cursor.getColumnIndex(Settings.PROJECTION[1]);
                 int tempBucketId = cursor.getColumnIndex(Settings.PROJECTION[2]);
                 int tempBucketName = cursor.getColumnIndex(Settings.PROJECTION[3]);
                 int tempThumbnail = cursor.getColumnIndex(Settings.PROJECTION[4]);
 
-                do{
+                do {
+
                     String pictureId = cursor.getString(tempPictureId);
                     String picturePath = cursor.getString(tempPicturePath);
                     String bucketId = cursor.getString(tempBucketId);
@@ -77,17 +77,18 @@ public class PictureProvider{
                     PictureBucket pictureBucket = pictureBucketMap.get(bucketId);
                     Log.i(Settings.TAG, "Bucket name is " + bucketName);
 
-                    if(pictureBucket == null){
+                    if (pictureBucket == null) {
                         pictureBucket = new PictureBucket(bucketId, bucketName);
                         pictureBucket.setPictureList(new ArrayList<Picture>());
                         pictureBucketMap.put(bucketId, pictureBucket);
+                        pictureBucketList.add(pictureBucket);
                     }
 
                     Picture picture = new Picture(pictureId, picturePath, pictureBucket, thumbnail);
                     pictureBucket.AddToPictureList(picture);
-                    pictureBucketList.add(pictureBucket);
 
-                }while(cursor.moveToNext());
+                } while (cursor.moveToNext());
+
             }
         }
 
