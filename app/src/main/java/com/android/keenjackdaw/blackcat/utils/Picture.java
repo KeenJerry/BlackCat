@@ -1,11 +1,11 @@
 package com.android.keenjackdaw.blackcat.utils;
 
 public class Picture {
-    private String pictureId = null;
+    private String pictureId;
     private boolean isSelected = false;
-    private String picturePath = null;
-    private PictureBucket pictureBucket = null;
-    private String thumbnail = null;
+    private String picturePath;
+    private PictureBucket pictureBucket;
+    private String thumbnail;
 
     public String getPictureId() {
         return pictureId;

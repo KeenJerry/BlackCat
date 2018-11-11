@@ -1,11 +1,11 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.GridView;
 
 import com.android.keenjackdaw.blackcat.R;
+import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
 import com.android.keenjackdaw.blackcat.controller.PictureProvider;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
-import com.android.keenjackdaw.blackcat.ui.PictureLayout;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 import com.android.keenjackdaw.blackcat.utils.GridViewAdaptor;
 import com.android.keenjackdaw.blackcat.utils.Picture;
@@ -38,6 +38,7 @@ public class DataCenterFragment extends Fragment {
     private CitrusFaceManager citrusFaceManager = null;
     private ExecutorService threadPool = null;
     private GridViewAdaptor gridViewAdaptor = null;
+    private Context context = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,13 +91,25 @@ public class DataCenterFragment extends Fragment {
         List<Picture> pictures = new ArrayList<>();
 
         for(PictureBucket pictureBucket: pictureBuckets){
-            Picture[] picturesInBucket = (Picture[]) pictureBucket.getPictureList().toArray();
+            List<Picture> picturesList = pictureBucket.getPictureList();
+            Picture[] picturesInBucket = picturesList.toArray(new Picture[picturesList.size()]);
             Collections.addAll(pictures, picturesInBucket);
         }
-        GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(getContext(), 0, (Picture[])pictures.toArray(), gridView);
+        Log.i(Settings.TAG, "pictures id: " + pictures.get(0).getPictureId());
+        Log.i(Settings.TAG, "pictures id: " + pictures.get(1).getPictureId());
+        Log.i(Settings.TAG, "pictures id: " + pictures.get(2).getPictureId());
+        Log.i(Settings.TAG, "pictures id: " + pictures.get(3).getPictureId());
+
+        GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(context, 0, pictures.toArray(new Picture[pictures.size()]), gridView);
         gridView.setAdapter(gridViewAdaptor);
 
         return v;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     public void setLoadPictureRunnable(){

@@ -3,6 +3,7 @@ package com.android.keenjackdaw.blackcat.controller;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 
@@ -74,6 +75,7 @@ public class PictureProvider{
                     String thumbnail = cursor.getString(tempThumbnail);
 
                     PictureBucket pictureBucket = pictureBucketMap.get(bucketId);
+                    Log.i(Settings.TAG, "Bucket name is " + bucketName);
 
                     if(pictureBucket == null){
                         pictureBucket = new PictureBucket(bucketId, bucketName);
@@ -94,6 +96,19 @@ public class PictureProvider{
 
     public List<PictureBucket> getPictureBucketList() {
         return pictureBucketList;
+    }
+
+    public boolean hasPictureInCache(String thumbnail){
+        Bitmap bitmap = pictureCache.get(thumbnail);
+        return bitmap != null;
+    }
+
+    public Bitmap getCachedBitmap(String thumbnail){
+        return pictureCache.get(thumbnail);
+    }
+
+    public void addToCachedBitmap(String thumbnail, Bitmap bitmap){
+        pictureCache.put(thumbnail, bitmap);
     }
 
 }

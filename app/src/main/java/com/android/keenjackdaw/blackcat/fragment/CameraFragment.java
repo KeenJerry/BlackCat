@@ -162,7 +162,7 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-                    cameraOld.stopPreview();
+                    // cameraOld.stopPreview();
                 }
             });
 
