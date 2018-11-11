@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.util.LruCache;
+import android.view.View;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
@@ -13,14 +14,13 @@ import com.android.keenjackdaw.blackcat.utils.PictureBucket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PictureProvider {
+public class PictureProvider{
 
     private static List<PictureBucket> pictureBucketList = null;
-
     private static HashMap<String, PictureBucket> pictureBucketMap = null;
-
-    private LruCache<String, Bitmap> pictureCache = null;
+    private static LruCache<String, Bitmap> pictureCache = null;
 
     private PictureProvider() { }
 
@@ -30,6 +30,15 @@ public class PictureProvider {
         if(instance == null){
             pictureBucketMap = new HashMap<>();
             pictureBucketList = new ArrayList<>();
+
+            int maxMemory = (int) Runtime.getRuntime().maxMemory() / 4;
+            pictureCache = new LruCache<String, Bitmap>(maxMemory){
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount();
+                }
+            };
+
             return new PictureProvider();
         }
         return instance;
@@ -55,12 +64,14 @@ public class PictureProvider {
                 int tempPicturePath = cursor.getColumnIndex(Settings.PROJECTION[1]);
                 int tempBucketId = cursor.getColumnIndex(Settings.PROJECTION[2]);
                 int tempBucketName = cursor.getColumnIndex(Settings.PROJECTION[3]);
+                int tempThumbnail = cursor.getColumnIndex(Settings.PROJECTION[4]);
 
                 do{
                     String pictureId = cursor.getString(tempPictureId);
                     String picturePath = cursor.getString(tempPicturePath);
                     String bucketId = cursor.getString(tempBucketId);
                     String bucketName = cursor.getString(tempBucketName);
+                    String thumbnail = cursor.getString(tempThumbnail);
 
                     PictureBucket pictureBucket = pictureBucketMap.get(bucketId);
 
@@ -70,7 +81,7 @@ public class PictureProvider {
                         pictureBucketMap.put(bucketId, pictureBucket);
                     }
 
-                    Picture picture = new Picture(pictureId, picturePath, pictureBucket);
+                    Picture picture = new Picture(pictureId, picturePath, pictureBucket, thumbnail);
                     pictureBucket.AddToPictureList(picture);
                     pictureBucketList.add(pictureBucket);
 
@@ -84,4 +95,5 @@ public class PictureProvider {
     public List<PictureBucket> getPictureBucketList() {
         return pictureBucketList;
     }
+
 }

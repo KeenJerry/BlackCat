@@ -1,5 +1,6 @@
 package com.android.keenjackdaw.blackcat.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -8,7 +9,6 @@ import android.util.Pair;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
-import com.android.keenjackdaw.blackcat.activity.CameraActivity;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
@@ -23,7 +23,7 @@ public class CitrusFaceManager {
     // FIXME It's not an error!!!!!
     private static CitrusFaceManager instance = new CitrusFaceManager();
     private byte[][] byteBuffers = null;
-    private CameraActivity cameraActivity = null;
+    private Activity activity = null;
     private Context appContext = null;
     private CitrusFaceSDK citrusFaceSDK = null;
     private List<String> userProfile = null;
@@ -43,9 +43,8 @@ public class CitrusFaceManager {
     }
 
     public void setUpAppInfo(){
-        cameraActivity = (CameraActivity) BlackCatApplication.getCurrentActivity().get();
-        appContext = cameraActivity.getApplicationContext();
-
+        activity = BlackCatApplication.getCurrentActivity().get();
+        appContext = activity.getApplicationContext();
     }
 
     public void initCitrusFaceSDK(int width, int height) throws BlackCatException{
@@ -89,7 +88,7 @@ public class CitrusFaceManager {
         }
 
         // FIXME it's not an error orz...
-        String dbPath = cameraActivity.getString(R.string.db_path);
+        String dbPath = activity.getString(R.string.db_path);
         Settings.ExternalStorageState state = checkExternalStorage();
         if(state != Settings.ExternalStorageState.All_ALLOWED){
             throw new BlackCatException("External storage access not allowed or only allow read.");

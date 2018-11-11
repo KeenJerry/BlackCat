@@ -22,30 +22,27 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@android:color/darker_gray" />
 
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
+
+    <GridView
+        android:id="@+id/picture_grid_layout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp">
+        android:columnWidth="100dp"
+        android:layout_marginTop="50dp"
+        android:stretchMode="columnWidth"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="30dp"
+        android:gravity="center" >
 
-        <GridLayout
-            android:id="@+id/picture_grid_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alignmentMode="alignMargins"
-            android:columnCount="4"
-            android:orientation="horizontal"
-            android:rowCount="4">
+    </GridView>
 
-        </GridLayout>
-
-    </ScrollView>
 
     <LinearLayout
         android:id="@+id/data_center_button_linear_layout"

@@ -12,7 +12,7 @@
 
     </declare-styleable>
 
-    <declare-styleable name="PictureView">
+    <declare-styleable name="PictureLayout">
         <attr name="unactivated_icon" format="reference"/>
         <attr name="activated_icon" format="reference"/>
     </declare-styleable>
