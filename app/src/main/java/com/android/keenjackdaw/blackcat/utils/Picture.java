@@ -33,4 +33,8 @@ public class Picture {
     public String getThumbnail() {
         return thumbnail;
     }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 }

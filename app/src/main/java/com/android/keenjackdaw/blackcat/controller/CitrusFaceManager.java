@@ -2,6 +2,7 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
@@ -15,6 +16,13 @@ import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 
 import org.jetbrains.annotations.Contract;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +36,7 @@ public class CitrusFaceManager {
     private CitrusFaceSDK citrusFaceSDK = null;
     private List<String> userProfile = null;
     private static final TimeRange timeRange = new TimeRange();
+    private String nameFilePath = null;
 
     @Contract(pure = true)
     public static CitrusFaceManager getInstance() {
@@ -94,6 +103,7 @@ public class CitrusFaceManager {
             throw new BlackCatException("External storage access not allowed or only allow read.");
         }
         citrusFaceSDK.DBSet(dbPath);
+        nameFilePath = citrusFaceSDK.DBName() + ".name";
 
     }
 
@@ -140,6 +150,10 @@ public class CitrusFaceManager {
 
     public int getResFaceNum() {
         return citrusFaceSDK.GetResFaceNum();
+    }
+
+    public int getResListNum() {
+        return citrusFaceSDK.GetResListNum();
     }
 
     public byte[][] getByteBuffers() {
@@ -240,6 +254,74 @@ public class CitrusFaceManager {
         }
     }
 
+    public void reset(){
+        citrusFaceSDK.Reset();
+    }
+
+    public String getNameFilePath() {
+        return nameFilePath;
+    }
+
+    public List<String> readNames(String nameFilePath){
+
+        List<String> list = new ArrayList<>();
+        BufferedReader reader = null;
+        File nameFile = null;
+        FileReader fileReader = null;
+        nameFile = new File(nameFilePath);
+
+
+        if(nameFile.exists()){
+            try{
+                fileReader = new FileReader(nameFile);
+            }
+            catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+
+            if(fileReader == null){
+                return list;
+            }
+            reader = new BufferedReader(fileReader);
+        }
+        String line;
+
+        while(true) {
+            try{
+                line = reader.readLine();
+                if(line == null){
+                    break;
+                }
+                list.add(line);
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        try{
+            reader.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return list;
+
+    }
+
+    public void detectWithImage(Bitmap bitmap, int pass){
+        citrusFaceSDK.ImgSetSize(bitmap.getHeight(), bitmap.getWidth(), pass);
+        ByteBuffer buffer = ByteBuffer.allocate(bitmap.getRowBytes() * bitmap.getHeight());
+        bitmap.copyPixelsToBuffer(buffer);
+        citrusFaceSDK.SetImage(buffer.array(), pass);
+        citrusFaceSDK.FaceDetect();
+    }
+
+    public void writeNames(){
+
+    }
+
+    public void addToDB(int id){
+        citrusFaceSDK.DBAdd(id);
+    }
     static class TimeRange {
         private long frameCount;
         private long frameCurTime;

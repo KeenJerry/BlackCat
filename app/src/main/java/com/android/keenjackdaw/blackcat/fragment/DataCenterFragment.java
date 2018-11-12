@@ -1,7 +1,8 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.GridView;
 
+import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
@@ -38,7 +40,11 @@ public class DataCenterFragment extends Fragment {
     private CitrusFaceManager citrusFaceManager = null;
     private ExecutorService threadPool = null;
     private GridViewAdaptor gridViewAdaptor = null;
-    private Context context = null;
+    private String nameFilePath = null;
+    private List<String> nameList = null;
+    private int faceListNum = 0;
+    private int faceNum = 0;
+    private int idNow = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class DataCenterFragment extends Fragment {
             }
         });
 
-        GridView gridView = v.findViewById(R.id.picture_grid_layout);
+        final GridView gridView = v.findViewById(R.id.picture_grid_layout);
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -72,6 +78,10 @@ public class DataCenterFragment extends Fragment {
             }
         });
 
+
+        // TODO Delete below after debug
+        Log.i(Settings.TAG, "grid view init.");
+
         threadPool = Executors.newCachedThreadPool();
 
         citrusFaceManager = CitrusFaceManager.getInstance();
@@ -81,13 +91,24 @@ public class DataCenterFragment extends Fragment {
         }catch (BlackCatException e){
             e.printStackTrace();
         }
+        citrusFaceManager.reset();
+        nameFilePath = citrusFaceManager.getNameFilePath();
+        nameList = citrusFaceManager.readNames(nameFilePath);
+
+
+        Log.i(Settings.TAG, "citrusFace Manager init");
 
         try{
-            pictureProvider.loadPictureData(context);
+            pictureProvider.setUpInfo();
+            pictureProvider.loadPictureData(BlackCatApplication.getCurrentActivity().get());
         }catch (BlackCatException e){
             e.printStackTrace();
         }
+
+        Log.i(Settings.TAG, "pictureProvider init");
         pictureBuckets = pictureProvider.getPictureBucketList();
+
+        Log.i(Settings.TAG, "pictureBuckets init");
         List<Picture> pictures = new ArrayList<>();
 
         for(PictureBucket pictureBucket: pictureBuckets){
@@ -95,18 +116,42 @@ public class DataCenterFragment extends Fragment {
             Picture[] picturesInBucket = picturesList.toArray(new Picture[picturesList.size()]);
             Collections.addAll(pictures, picturesInBucket);
         }
-        Log.i(Settings.TAG, "pictures id: " + pictures.get(0).getPictureId());
 
-        GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(context, 0, pictures.toArray(new Picture[pictures.size()]), gridView);
+        final GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(BlackCatApplication.getCurrentActivity().get(), 0, pictures.toArray(new Picture[pictures.size()]), gridView);
+        Log.i(Settings.TAG, "gridView adaptor init");
         gridView.setAdapter(gridViewAdaptor);
 
-        return v;
-    }
+        Button addButton = v.findViewById(R.id.data_center_button_add);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int count = gridViewAdaptor.getCount();
+                for(int i = 0; i < count; i++){
+                    Picture picture = gridViewAdaptor.getItem(i);
+                    if(picture != null){
+                        if(picture.isSelected()){
+                            Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
+                            citrusFaceManager.reset();
+                            int width = bitmap.getWidth();
+                            int height = bitmap.getHeight();
+
+                            citrusFaceManager.detectWithImage(bitmap, 3);
+                            faceListNum = citrusFaceManager.getResListNum();
+                            faceNum = citrusFaceManager.getResFaceNum();
+                            if(faceNum > 0){
+                                idNow = 0;
+                                citrusFaceManager.addToDB(idNow);
+                            }
+
+
+                        }
+                    }
+                }
+            }
+        });
+
+        return v;
     }
 
     public void setLoadPictureRunnable(){
@@ -124,6 +169,5 @@ public class DataCenterFragment extends Fragment {
             }
         };
     }
-
 
 }

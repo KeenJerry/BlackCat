@@ -37,7 +37,7 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
         // TODO Delete after debug
         Log.i(Settings.TAG, "in getView, position is " + position);
 
-        Picture picture = getItem(position);
+        final Picture picture = getItem(position);
         Log.i(Settings.TAG, "picture id = " + picture.getPictureId());
 
         View view;
@@ -48,9 +48,9 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
             view = convertView;
         }
         ImageView thumbnailView = view.findViewById(R.id.picture_thumbnail);
+        final ImageView selectIconView = view.findViewById(R.id.select_icon);
 
         Bitmap thumbnail;
-
 
         if(PictureProvider.getInstance().hasPictureInCache(picture.getThumbnail())){
             Log.i(Settings.TAG, "not has bitmap in cache");
@@ -60,9 +60,27 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
         {
             File pictureThumbnail = new File(picture.getThumbnail());
             thumbnail = BitmapFactory.decodeFile(pictureThumbnail.getAbsolutePath());
+            Log.i(Settings.TAG, "" + BitmapFactory.decodeFile(pictureThumbnail.getAbsolutePath()).getByteCount());
             PictureProvider.getInstance().addToCachedBitmap(picture.getThumbnail(), thumbnail);
         }
         thumbnailView.setImageBitmap(thumbnail);
+
+        selectIconView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(picture.isSelected()){
+                    picture.setSelected(false);
+                    selectIconView.setImageResource(R.drawable.icon_deactivated);
+                }
+                else
+                {
+                    picture.setSelected(true);
+                    selectIconView.setImageResource(R.drawable.icon_activated);
+                }
+            }
+        });
+
+
         return view;
     }
 }
