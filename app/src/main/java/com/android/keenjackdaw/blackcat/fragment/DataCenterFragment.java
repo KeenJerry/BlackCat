@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
@@ -133,8 +134,6 @@ public class DataCenterFragment extends Fragment {
                             Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
 
                             citrusFaceManager.reset();
-                            int width = bitmap.getWidth();
-                            int height = bitmap.getHeight();
 
                             citrusFaceManager.detectWithImage(bitmap, 3);
                             faceListNum = citrusFaceManager.getResListNum();
@@ -142,9 +141,17 @@ public class DataCenterFragment extends Fragment {
                             if(faceNum > 0){
                                 idNow = 0;
                                 citrusFaceManager.addToDB(idNow);
+                                nameList.add("test");
+                                try{
+                                    citrusFaceManager.writeNames(citrusFaceManager.getNameFilePath(), nameList);
+                                }
+                                catch (BlackCatException e){
+                                    e.printStackTrace();
+                                }
                             }
-
-
+                            else {
+                                Toast.makeText(getContext(), "Add face failed. Please check the direction of the picture.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }

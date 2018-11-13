@@ -11,4 +11,5 @@
     <string name="data_center_add_button">Add</string>
     <string name="data_center_delete_button">Delete</string>
     <string name="back_to_camera_activity">Back</string>
+    <String name="add_face_failed">Add face failed</String>
 </resources>

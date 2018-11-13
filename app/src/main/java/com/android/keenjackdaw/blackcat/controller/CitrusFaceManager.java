@@ -17,9 +17,11 @@ import com.rokid.citrus.citrusfacesdk.CitrusFaceSDK;
 import org.jetbrains.annotations.Contract;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -315,7 +317,40 @@ public class CitrusFaceManager {
         citrusFaceSDK.FaceDetect();
     }
 
-    public void writeNames(){
+    public void writeNames(String nameFilePath, List<String>nameList) throws BlackCatException{
+        File nameFile = new File(nameFilePath);
+        if(!nameFile.exists()) {
+
+            if (!nameFile.getParentFile().exists()) {
+                if (!nameFile.getParentFile().mkdirs()) {
+                    throw new BlackCatException("create name file parent failed.");
+                }
+            }
+
+            try {
+                if (nameFile.setReadable(true) && nameFile.setWritable(true)) {
+                    if (!nameFile.createNewFile()) {
+                        throw new BlackCatException("Create new file failed.");
+                    }
+                }
+            } catch (IOException e) {
+                throw new BlackCatException("Create new file failed.");
+            }
+        }
+        try{
+            FileWriter fileWriter = new FileWriter(nameFile);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            for (int i = 0; i < nameList.size(); ++i) {
+                bufferedWriter.write((String)(nameList.get(i)));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.close();
+            fileWriter.close();
+
+        }catch (IOException e){
+            throw new BlackCatException("Create file writer failed.");
+        }
 
     }
 
