@@ -130,6 +130,7 @@ public class CameraFragment extends Fragment {
                                     detectionRunnable.setRunning(true);
                                     recognitionRunnable.setRunning(true);
                                     new Thread(detectionRunnable).start();
+                                    new Thread(recognitionRunnable).start();
                                 }
 
                                 citrusFaceManager.doFaceTrack();
@@ -222,20 +223,22 @@ public class CameraFragment extends Fragment {
         recognitionRunnable = new BlackCatRunnable() {
             @Override
             protected void blackCatRun() {
-                while(isRunning()){
-                    try{
+                while (isRunning()) {
 
-                        // Thread.sleep(2000);
-                        for(int i = 0; i < faceNumUnrecognized; i++){
-                            Pair<Integer, Integer> result = citrusFaceManager.doFaceRecognition(i);
-                            if (result.first == 0) {
-                                Log.i(Settings.TAG, "Recog " + i + ", id = " + result.second);
-                            }
-                        }
-                        throw new InterruptedException();
-                    }
-                    catch (InterruptedException e){
-                        e.printStackTrace();
+                    int faceNum;
+                    faceNum = citrusFaceManager.getResFaceNum();
+                    // TODO Delete after debug
+                    Log.i(Settings.TAG, "in recognition , faca Num");
+                    // Thread.sleep(2000);
+                    for (int i = 0; i < faceNum; i++) {
+                        Pair<Integer, Integer> result = citrusFaceManager.doFaceRecognition(i);
+                        // TODO Need refactor
+//                        if(result != null){
+//                            if (result.first == 0) {
+//                                Log.i(Settings.TAG, "Recog " + i + ", id = " + result.second);
+//                            }
+//                        }
+
                     }
                 }
             }

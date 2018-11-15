@@ -2,6 +2,7 @@ package com.android.keenjackdaw.blackcat.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
@@ -106,6 +107,32 @@ public class CitrusFaceManager {
         }
         citrusFaceSDK.DBSet(dbPath);
         nameFilePath = citrusFaceSDK.DBName() + ".name";
+        userProfile = readNames(nameFilePath);
+
+    }
+
+    public void initCitrusFaceSDKWithoutBuffer() throws BlackCatException{
+        citrusFaceSDK = new CitrusFaceSDK();
+        if(!auth()){
+            throw new BlackCatException("SDK auth failed.");
+        }
+        // TODO Delete below after debug
+        Log.i(Settings.TAG, "SDK app context is " + appContext);
+        int i = citrusFaceSDK.Init(appContext);
+        Log.i(Settings.TAG, "SDK init return " + i);
+
+        String dbPath = activity.getString(R.string.db_path);
+        Settings.ExternalStorageState state = checkExternalStorage();
+        if(state != Settings.ExternalStorageState.All_ALLOWED){
+            throw new BlackCatException("External storage access not allowed or only allow read.");
+        }
+        int k =  citrusFaceSDK.DBSet(dbPath);
+
+        // TODO Delete below after debug
+        Log.i(Settings.TAG, "DBSet return " + k);
+        Log.i(Settings.TAG, "DB path is " + dbPath);
+        nameFilePath = citrusFaceSDK.DBName() + ".name";
+        userProfile = readNames(nameFilePath);
 
     }
 
@@ -182,7 +209,13 @@ public class CitrusFaceManager {
         return new Pair<>(null, null);
     }
 
+    public void faceRecognition(int index){
+        citrusFaceSDK.FaceRecog(index);
+    }
+
     public void drawRect(RectView rectView){
+        // TODO Delete after debug
+        // Log.i(Settings.TAG, "userProfile");
 
         rectView.lockCanvas();
         rectView.clearCanvas();
@@ -205,6 +238,8 @@ public class CitrusFaceManager {
                     rectBox[2] = right;
 
                     int id = citrusFaceSDK.GetResId(i);
+                    // TODO Delete after debug
+                    Log.i(Settings.TAG, "id is " + id);
                     int isNewOne = citrusFaceSDK.GetResIsNewone(i);
                     float score = (int) (citrusFaceSDK.GetResScore(i) * 100) / 100.f;
                     int age = (int) citrusFaceSDK.GetResAge(i);
@@ -234,6 +269,9 @@ public class CitrusFaceManager {
 
                     String result;
 
+                    // userProfile = readNames(nameFilePath);
+                    // TODO Delete after debug
+                    Log.i(Settings.TAG, "id is " + id);
                     if (id >= 0) {
                         if(userProfile == null)
                             result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
@@ -270,6 +308,8 @@ public class CitrusFaceManager {
         BufferedReader reader = null;
         File nameFile = null;
         FileReader fileReader = null;
+        // TODO Delete below after debug
+        Log.i(Settings.TAG, "name file path is " + nameFilePath);
         nameFile = new File(nameFilePath);
 
 
@@ -310,7 +350,8 @@ public class CitrusFaceManager {
     }
 
     public void detectWithImage(Bitmap bitmap, int pass){
-        citrusFaceSDK.ImgSetSize(bitmap.getHeight(), bitmap.getWidth(), pass);
+        citrusFaceSDK.Reset();
+        citrusFaceSDK.ImgSetSize(bitmap.getWidth(), bitmap.getHeight(), pass);
         ByteBuffer buffer = ByteBuffer.allocate(bitmap.getRowBytes() * bitmap.getHeight());
         bitmap.copyPixelsToBuffer(buffer);
         citrusFaceSDK.SetImage(buffer.array(), pass);
@@ -319,6 +360,10 @@ public class CitrusFaceManager {
 
     public void writeNames(String nameFilePath, List<String>nameList) throws BlackCatException{
         File nameFile = new File(nameFilePath);
+        // TODO Delete after debug
+        if(nameFile.exists()){
+            Log.i(Settings.TAG, "name list 0:" + nameList.get(0));
+        }
         if(!nameFile.exists()) {
 
             if (!nameFile.getParentFile().exists()) {
@@ -329,7 +374,10 @@ public class CitrusFaceManager {
 
             try {
                 if (nameFile.setReadable(true) && nameFile.setWritable(true)) {
+                    //TODO Delete after debug
+                    Log.i(Settings.TAG, "create file.");
                     if (!nameFile.createNewFile()) {
+                        Log.i(Settings.TAG, "create file failed.");
                         throw new BlackCatException("Create new file failed.");
                     }
                 }
@@ -354,8 +402,8 @@ public class CitrusFaceManager {
 
     }
 
-    public void addToDB(int id){
-        citrusFaceSDK.DBAdd(id);
+    public int addToDB(int id){
+        return citrusFaceSDK.DBAdd(id);
     }
     static class TimeRange {
         private long frameCount;

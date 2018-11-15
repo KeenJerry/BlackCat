@@ -165,7 +165,7 @@ public class CameraOld {
         for(Size s: supportedPreviewSizes){
             // TODO Delete after debug
             Log.i(Settings.TAG, "Size now height:" + s.height + " width:" + s.width);
-            if(s.width >= cameraView.getHeight() && isInTolerance(s, Settings.ASPECT_RATIO)){
+            if(s.width >= 2000 && isInTolerance(s, Settings.ASPECT_RATIO)){
                 break;
             }
             i++;

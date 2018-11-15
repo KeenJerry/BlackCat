@@ -3,6 +3,7 @@ package com.android.keenjackdaw.blackcat.fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static android.util.Log.i;
 
 public class DataCenterFragment extends Fragment {
 
@@ -81,15 +84,17 @@ public class DataCenterFragment extends Fragment {
 
 
         // TODO Delete below after debug
-        Log.i(Settings.TAG, "grid view init.");
+        i(Settings.TAG, "grid view init.");
 
         threadPool = Executors.newCachedThreadPool();
 
         citrusFaceManager = CitrusFaceManager.getInstance();
         citrusFaceManager.setUpAppInfo();
         try {
-            citrusFaceManager.initCitrusFaceSDK(0, 0);
+            citrusFaceManager.initCitrusFaceSDKWithoutBuffer();
         }catch (BlackCatException e){
+            // TODO Delete after debug
+            Log.i(Settings.TAG, "External storage not allowed.");
             e.printStackTrace();
         }
         citrusFaceManager.reset();
@@ -97,7 +102,7 @@ public class DataCenterFragment extends Fragment {
         nameList = citrusFaceManager.readNames(nameFilePath);
 
 
-        Log.i(Settings.TAG, "citrusFace Manager init");
+        i(Settings.TAG, "citrusFace Manager init");
 
         try{
             pictureProvider.setUpInfo();
@@ -106,10 +111,10 @@ public class DataCenterFragment extends Fragment {
             e.printStackTrace();
         }
 
-        Log.i(Settings.TAG, "pictureProvider init");
+        i(Settings.TAG, "pictureProvider init");
         pictureBuckets = pictureProvider.getPictureBucketList();
 
-        Log.i(Settings.TAG, "pictureBuckets init");
+        i(Settings.TAG, "pictureBuckets init");
         List<Picture> pictures = new ArrayList<>();
 
         for(PictureBucket pictureBucket: pictureBuckets){
@@ -119,7 +124,7 @@ public class DataCenterFragment extends Fragment {
         }
 
         final GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(BlackCatApplication.getCurrentActivity().get(), 0, pictures.toArray(new Picture[pictures.size()]), gridView);
-        Log.i(Settings.TAG, "gridView adaptor init");
+        i(Settings.TAG, "gridView adaptor init");
         gridView.setAdapter(gridViewAdaptor);
 
         Button addButton = v.findViewById(R.id.data_center_button_add);
@@ -129,25 +134,66 @@ public class DataCenterFragment extends Fragment {
                 int count = gridViewAdaptor.getCount();
                 for(int i = 0; i < count; i++){
                     Picture picture = gridViewAdaptor.getItem(i);
+                    // TODO Delete below after debug
+                    i(Settings.TAG, "picture is " + picture.getPicturePath());
                     if(picture != null){
                         if(picture.isSelected()){
+                            // TODO Delete below after debug
+                            i(Settings.TAG, "pic " + picture.getPicturePath() + " is selected.");
                             Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
+                            Bitmap scaledBitmap;
+
+                            int h = bitmap.getHeight();
+                            int w = bitmap.getWidth();
+
+                            int max = h > w? h: w;
+                            float scale;
+                            if (max > 800) {
+                                scale = (float)800/(float)max;
+
+                                Matrix matrix = new Matrix();
+                                matrix.postScale(scale, scale);
+                                scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+                            } else {
+                                scaledBitmap = bitmap;
+                            }
+
+
+                            // TODO Delete below after debug
+                            Log.i(Settings.TAG, "bitmap width = " + bitmap.getWidth() + ", height = " + bitmap.getHeight());
+                            Log.i(Settings.TAG, "Scaled bitmap width = " + scaledBitmap.getWidth() + ", height = " + scaledBitmap.getHeight());
 
                             citrusFaceManager.reset();
 
-                            citrusFaceManager.detectWithImage(bitmap, 3);
+                            citrusFaceManager.detectWithImage(scaledBitmap, 3);
                             faceListNum = citrusFaceManager.getResListNum();
                             faceNum = citrusFaceManager.getResFaceNum();
+
+                            // TODO Delete below after debug
+                            Log.i(Settings.TAG, "face number is " + faceNum);
+                            Log.i(Settings.TAG, "face list number is " + faceListNum);
+
                             if(faceNum > 0){
                                 idNow = 0;
-                                citrusFaceManager.addToDB(idNow);
-                                nameList.add("test");
-                                try{
-                                    citrusFaceManager.writeNames(citrusFaceManager.getNameFilePath(), nameList);
+                                citrusFaceManager.faceRecognition(idNow);
+                                // TODO Delete after debug
+                                Log.i(Settings.TAG, "add to db return " + citrusFaceManager.addToDB(idNow));
+                                if(citrusFaceManager.addToDB(idNow) == 0){
+                                    // TODO Delete after debug
+                                    Log.i(Settings.TAG, "id is " + idNow);
+                                    Log.i(Settings.TAG, "name list is " + nameList.toString());
+                                    nameList.add("trump");
+                                    try{
+                                        citrusFaceManager.writeNames(citrusFaceManager.getNameFilePath(), nameList);
+                                    }
+                                    catch (BlackCatException e){
+                                        e.printStackTrace();
+                                    }
+                                }else
+                                {
+                                    Toast.makeText(getContext(), "add To DB failed.", Toast.LENGTH_SHORT).show();
                                 }
-                                catch (BlackCatException e){
-                                    e.printStackTrace();
-                                }
+
                             }
                             else {
                                 Toast.makeText(getContext(), "Add face failed. Please check the direction of the picture.", Toast.LENGTH_SHORT).show();

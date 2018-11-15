@@ -22,6 +22,7 @@ public class RectView extends SurfaceView{
     private Canvas canvas = null;
 
     private Paint facePainter = null;
+    private Paint namePainter = null;
     private Paint paintAnchor   = null;
 
     private Rect faceRect = null;
@@ -78,6 +79,7 @@ public class RectView extends SurfaceView{
 
         paintAnchor = new Paint();
         facePainter = new Paint();
+        namePainter = new Paint();
 
         faceRect = new Rect();
 
@@ -89,6 +91,11 @@ public class RectView extends SurfaceView{
         facePainter.setStyle(Paint.Style.STROKE);
         facePainter.setColor(Color.GREEN);
         facePainter.setStrokeWidth(Settings.FACE_RECT_STROKE_WIDTH);
+
+        namePainter.setColor(Color.GREEN);
+        namePainter.setStrokeWidth(5);
+        namePainter.setStyle(Paint.Style.STROKE);
+        namePainter.setTextSize(50);
     }
 
     public void lockCanvas() {
@@ -111,6 +118,9 @@ public class RectView extends SurfaceView{
             faceRect.set((int) (rect[0] * viewWidth), (int) (rect[1] * viewHeight),
                     (int) (rect[2] * viewWidth), (int) (rect[3] * viewHeight));
             canvas.drawRect(faceRect, facePainter);
+
+            if(userProfile != null)
+                canvas.drawText(userProfile, (int) (rect[0] * viewWidth), (int) (rect[1] * viewHeight), namePainter);
         }
     }
 
