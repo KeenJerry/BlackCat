@@ -38,7 +38,7 @@ import static android.util.Log.i;
 
 public class DataCenterFragment extends Fragment {
 
-    private PictureProvider pictureProvider = PictureProvider.getInstance();
+    private PictureProvider pictureProvider = null;
     private List<PictureBucket> pictureBuckets = null;
     private BlackCatRunnable loadPictureRunnable = null;
     private CitrusFaceManager citrusFaceManager = null;
@@ -60,14 +60,22 @@ public class DataCenterFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_data_center, container, false);
+        pictureProvider = PictureProvider.getInstance();
+
+        Log.i(Settings.TAG, "get picture provider completed.");
+
         Button backButton = v.findViewById(R.id.back_to_camera_activity_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CameraActivity.class);
+                citrusFaceManager.destroySDK();
+                pictureProvider.destory();
                 startActivity(intent);
             }
         });
+
+        Log.i(Settings.TAG, "back button inited.");
 
         final GridView gridView = v.findViewById(R.id.picture_grid_layout);
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -86,10 +94,13 @@ public class DataCenterFragment extends Fragment {
         // TODO Delete below after debug
         i(Settings.TAG, "grid view init.");
 
-        threadPool = Executors.newCachedThreadPool();
+        // threadPool = Executors.newCachedThreadPool();
+        // threadPool.shutdown();
 
         citrusFaceManager = CitrusFaceManager.getInstance();
-        citrusFaceManager.setUpAppInfo();
+        citrusFaceManager.setUpAppInfo(getActivity());
+
+        Log.i(Settings.TAG, "set up app info completed.");
         try {
             citrusFaceManager.initCitrusFaceSDKWithoutBuffer();
         }catch (BlackCatException e){
@@ -97,21 +108,24 @@ public class DataCenterFragment extends Fragment {
             Log.i(Settings.TAG, "External storage not allowed.");
             e.printStackTrace();
         }
+        Log.i(Settings.TAG, "init citrus SDK completed.");
         citrusFaceManager.reset();
         nameFilePath = citrusFaceManager.getNameFilePath();
         nameList = citrusFaceManager.readNames(nameFilePath);
 
+        Log.i(Settings.TAG, "read name file completed.");
 
-        i(Settings.TAG, "citrusFace Manager init");
+        Log.i(Settings.TAG, "picture provider init");
 
         try{
-            pictureProvider.setUpInfo();
-            pictureProvider.loadPictureData(BlackCatApplication.getCurrentActivity().get());
+            pictureProvider.initPictureProvider();
+            pictureProvider.setUpInfo(getActivity());
+            pictureProvider.loadPictureData(getActivity());
         }catch (BlackCatException e){
             e.printStackTrace();
         }
 
-        i(Settings.TAG, "pictureProvider init");
+        i(Settings.TAG, "pictureProvider init complete.");
         pictureBuckets = pictureProvider.getPictureBucketList();
 
         i(Settings.TAG, "pictureBuckets init");
@@ -123,7 +137,7 @@ public class DataCenterFragment extends Fragment {
             Collections.addAll(pictures, picturesInBucket);
         }
 
-        final GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(BlackCatApplication.getCurrentActivity().get(), 0, pictures.toArray(new Picture[pictures.size()]), gridView);
+        final GridViewAdaptor gridViewAdaptor = new GridViewAdaptor(getActivity(), 0, pictures.toArray(new Picture[pictures.size()]), gridView);
         i(Settings.TAG, "gridView adaptor init");
         gridView.setAdapter(gridViewAdaptor);
 
@@ -182,13 +196,16 @@ public class DataCenterFragment extends Fragment {
                                     // TODO Delete after debug
                                     Log.i(Settings.TAG, "id is " + idNow);
                                     Log.i(Settings.TAG, "name list is " + nameList.toString());
-                                    nameList.add("trump");
+                                    Log.i(Settings.TAG, "picture name is " + picture.getPictureName());
+
+                                    nameList.add(picture.getPictureName());
                                     try{
                                         citrusFaceManager.writeNames(citrusFaceManager.getNameFilePath(), nameList);
                                     }
                                     catch (BlackCatException e){
                                         e.printStackTrace();
                                     }
+                                    Toast.makeText(getContext(), "Add face succeeded." + i, Toast.LENGTH_SHORT).show();
                                 }else
                                 {
                                     Toast.makeText(getContext(), "add To DB failed.", Toast.LENGTH_SHORT).show();
@@ -198,6 +215,7 @@ public class DataCenterFragment extends Fragment {
                             else {
                                 Toast.makeText(getContext(), "Add face failed. Please check the direction of the picture.", Toast.LENGTH_SHORT).show();
                             }
+
                         }
                     }
                 }
@@ -205,6 +223,12 @@ public class DataCenterFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
     }
 
     public void setLoadPictureRunnable(){

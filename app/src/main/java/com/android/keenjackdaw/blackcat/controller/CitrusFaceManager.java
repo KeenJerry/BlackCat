@@ -44,9 +44,12 @@ public class CitrusFaceManager {
     @Contract(pure = true)
     public static CitrusFaceManager getInstance() {
         if(instance == null){
+            // TODO Delete after debug
+            Log.i(Settings.TAG, "SDK instance is null.");
             instance = new CitrusFaceManager();
             return instance;
         }
+        Log.i(Settings.TAG, "SDK instance is not null.");
         return instance;
     }
 
@@ -54,8 +57,8 @@ public class CitrusFaceManager {
         this.byteBuffers = byteBuffers;
     }
 
-    public void setUpAppInfo(){
-        activity = BlackCatApplication.getCurrentActivity().get();
+    public void setUpAppInfo(Activity activity){
+        this.activity = activity;
         appContext = activity.getApplicationContext();
     }
 
@@ -259,11 +262,11 @@ public class CitrusFaceManager {
                     }
 
                     if(genderMark == 0){
-                        gender = "adult";
+                        gender = "female";
                     }
                     else{
                         if(genderMark == 1) {
-                            gender = "child";
+                            gender = "male";
                         }
                     }
 
@@ -271,12 +274,16 @@ public class CitrusFaceManager {
 
                     // userProfile = readNames(nameFilePath);
                     // TODO Delete after debug
+                    Log.i(Settings.TAG, "user profile is " + userProfile.toString());
                     Log.i(Settings.TAG, "id is " + id);
                     if (id >= 0) {
                         if(userProfile == null)
                             result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                         else
-                            result = trackId + ":" + userProfile.get(id);
+                        {
+
+                            result = trackId + ":" + userProfile.get(id / 2);
+                        }
                     } else {
                         result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                     }
@@ -291,6 +298,8 @@ public class CitrusFaceManager {
     public void destroySDK(){
         if(citrusFaceSDK != null){
             citrusFaceSDK.Destroy();
+            appContext = null;
+            activity = null;
         }
     }
 
@@ -325,6 +334,9 @@ public class CitrusFaceManager {
                 return list;
             }
             reader = new BufferedReader(fileReader);
+        }
+        else{
+            return list;
         }
         String line;
 

@@ -145,10 +145,16 @@ public class CameraOld {
     }
 
     public void closeCamera(){
+        camera.stopFaceDetection();
+        camera.setPreviewCallback(null);
         stopPreview();
         camera.release();
+        appContext = null;
+
+        cameraActivity = null;
     }
 
+    
     public Size getPreviewSize() {
         return previewSize;
     }

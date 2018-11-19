@@ -32,7 +32,11 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     public Fragment getFragmentContainer() {

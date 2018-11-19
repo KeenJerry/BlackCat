@@ -6,13 +6,18 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
@@ -49,21 +54,45 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
         }
         ImageView thumbnailView = view.findViewById(R.id.picture_thumbnail);
         final ImageView selectIconView = view.findViewById(R.id.select_icon);
+        final EditText editText = view.findViewById(R.id.picture_name);
 
         Bitmap thumbnail;
 
         if(PictureProvider.getInstance().hasPictureInCache(picture.getThumbnail())){
-            Log.i(Settings.TAG, "not has bitmap in cache");
+            // TODO Delete after debug
+            Log.i(Settings.TAG, "has picture in cache.");
+            // Log.i(Settings.TAG, "not has bitmap in cache");
             thumbnail = PictureProvider.getInstance().getCachedBitmap(picture.getThumbnail());
         }
         else
         {
-            File pictureThumbnail = new File(picture.getThumbnail());
-            thumbnail = BitmapFactory.decodeFile(pictureThumbnail.getAbsolutePath());
-            Log.i(Settings.TAG, "" + BitmapFactory.decodeFile(pictureThumbnail.getAbsolutePath()).getByteCount());
+            Log.i(Settings.TAG, "not has picture in cache.");
+            Log.i(Settings.TAG, "picture thumbnail is " + picture.getThumbnail());
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+            BitmapFactory.decodeFile(picture.getThumbnail(), options);
+            int height = options.outHeight;
+            int width= options.outWidth;
+            int inSampleSize = 2; // 默认像素压缩比例，压缩为原图的1/2
+            int minLen = Math.min(height, width); // 原图的最小边长
+            if(minLen > 250) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                float ratio = (float)minLen / 250; // 计算像素压缩比例
+                inSampleSize = (int)ratio;
+            }
+            options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+            options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+            thumbnail = BitmapFactory.decodeFile(picture.getThumbnail(), options); // 解码文件
+
+            Log.i(Settings.TAG, "" + thumbnail.getByteCount());
             PictureProvider.getInstance().addToCachedBitmap(picture.getThumbnail(), thumbnail);
+
         }
-        thumbnailView.setImageBitmap(thumbnail);
+        if(thumbnail != null){
+            thumbnailView.setImageBitmap(thumbnail);
+            editText.setText(picture.getPictureName());
+        }
+        // thumbnail.recycle();
 
         selectIconView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +106,23 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
                     picture.setSelected(true);
                     selectIconView.setImageResource(R.drawable.icon_activated);
                 }
+            }
+        });
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                picture.setPictureName(s.toString());
             }
         });
 

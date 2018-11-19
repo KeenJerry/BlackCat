@@ -1,5 +1,6 @@
 package com.android.keenjackdaw.blackcat.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -37,17 +38,29 @@ public class CameraFragment extends Fragment {
     RectView rectView = null;
     ImageButton addPictureButton = null;
     CitrusFaceManager citrusFaceManager = null;
+    // Context context = null;
 
 
     private BlackCatRunnable detectionRunnable = null;
     private BlackCatRunnable recognitionRunnable = null;
+
+    private Thread detectThread = null;
+    private Thread recognitionThread = null;
 
     private int faceNumUnrecognized = 0;
     // Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public void onDestroy() {
+        // citrusFaceManager
+        // TODO Delete after debug
+        Log.i(Settings.TAG, "camera fragment destroyed.");
+
+        super.onDestroy();
     }
 
     @Override
@@ -113,7 +126,7 @@ public class CameraFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    citrusFaceManager.setUpAppInfo();
+                    citrusFaceManager.setUpAppInfo(getActivity());
                     try {
                         citrusFaceManager.initCitrusFaceSDK(cameraOld.getPreviewSize().width, cameraOld.getPreviewSize().height);
                     } catch (BlackCatException e) {
@@ -129,8 +142,11 @@ public class CameraFragment extends Fragment {
                                 if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
                                     detectionRunnable.setRunning(true);
                                     recognitionRunnable.setRunning(true);
-                                    new Thread(detectionRunnable).start();
-                                    new Thread(recognitionRunnable).start();
+                                    detectThread = new Thread(detectionRunnable);
+                                    recognitionThread = new Thread(recognitionRunnable);
+
+                                    detectThread.start();
+                                    recognitionThread.start();
                                 }
 
                                 citrusFaceManager.doFaceTrack();
@@ -171,11 +187,27 @@ public class CameraFragment extends Fragment {
             addPictureButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), DataCenterActivity.class);
+
                     detectionRunnable.setRunning(false);
                     recognitionRunnable.setRunning(false);
-                    citrusFaceManager.destroySDK();
+                    detectThread.interrupt();
+                    recognitionThread.interrupt();
+
+                    try{
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+
+                    Log.i(Settings.TAG, "thread stopped.");
                     cameraOld.closeCamera();
+                    citrusFaceManager.destroySDK();
+
+                    Log.i(Settings.TAG, "SDK and camera closed.");
+
+                    Intent intent = new Intent(getActivity(), DataCenterActivity.class);
+                    Log.i(Settings.TAG, "intent inited.");
                     startActivity(intent);
                 }
             });
@@ -191,31 +223,32 @@ public class CameraFragment extends Fragment {
             @Override
             protected void blackCatRun() {
 
-
-                while (isRunning()){
-                    try{
+                try {
+                    Thread.sleep(2000);
+                    while (isRunning()) {
                         // TEST
-                        // Thread.sleep(2000);
+
                         Log.i(Settings.TAG, "in onPreviewFrame.");
                         setCurrentTime(System.currentTimeMillis());
-                        int faceNum = citrusFaceManager.getFaceNum();
+                        int faceNum = 0;
+                        if(isRunning()){
+                            faceNum = citrusFaceManager.getFaceNum();
+                        }
                         // TODO Delete below after debug
-                        Log.i(Settings.TAG,  "face detected:" + faceNum);
+                        Log.i(Settings.TAG, "face detected:" + faceNum);
                         setCurrentTime(System.currentTimeMillis() - getCurrentTime());
-                        if (faceNum == 5){
-                            while(citrusFaceManager.getResFaceNum() == 5){
-                                Thread.sleep(1000);
+                        if (faceNum == 5) {
+                            while (citrusFaceManager.getResFaceNum() == 5) {
+                                Thread.sleep(500);
                             }
                         }
-                        else{
-                            Thread.sleep(500);
-                        }
-                    }
-                    catch (InterruptedException e){
-                        e.printStackTrace();
                     }
                 }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
             }
+
         };
     }
 
@@ -225,8 +258,10 @@ public class CameraFragment extends Fragment {
             protected void blackCatRun() {
                 while (isRunning()) {
 
-                    int faceNum;
-                    faceNum = citrusFaceManager.getResFaceNum();
+                    int faceNum = 0;
+                    if(isRunning()){
+                        faceNum = citrusFaceManager.getResFaceNum();
+                    }
                     // TODO Delete after debug
                     Log.i(Settings.TAG, "in recognition , faca Num");
                     // Thread.sleep(2000);

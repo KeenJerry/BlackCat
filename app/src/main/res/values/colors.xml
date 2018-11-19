@@ -6,4 +6,5 @@
 
     <color name="blackBackground">#0F1312</color>
     <color name="greenPoint">#00FFBF</color>
+    <color name="pictureName">#ffffff</color>
 </resources>

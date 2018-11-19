@@ -20,41 +20,49 @@ import java.util.List;
 
 public class PictureProvider{
 
-    private static List<PictureBucket> pictureBucketList = null;
-    private static HashMap<String, PictureBucket> pictureBucketMap = null;
-    private static LruCache<String, Bitmap> pictureCache = null;
+    private List<PictureBucket> pictureBucketList = null;
+    private HashMap<String, PictureBucket> pictureBucketMap = null;
+    private LruCache<String, Bitmap> pictureCache = null;
     private Activity activity = null;
     private Context context = null;
 
     private PictureProvider() { }
 
-    private static PictureProvider instance = null;
+    private static PictureProvider instance = new PictureProvider();
 
     public static PictureProvider getInstance() {
         if(instance == null){
-            pictureBucketMap = new HashMap<>();
-            pictureBucketList = new ArrayList<>();
-
-            int maxMemory = (int) Runtime.getRuntime().maxMemory() / 4;
-            pictureCache = new LruCache<String, Bitmap>(maxMemory){
-                @Override
-                protected int sizeOf(String key, Bitmap value) {
-                    return value.getByteCount();
-                }
-            };
-
             return new PictureProvider();
         }
+        // TODO Delete after debug
+        Log.i(Settings.TAG, "picture provider instance is not null.");
         return instance;
     }
 
-    public void setUpInfo(){
-        activity = BlackCatApplication.getCurrentActivity().get();
+    public void initPictureProvider (){
+        // TODO Delete after debug
+        Log.i(Settings.TAG, "picture provider instance is " + instance);
+        pictureBucketMap = new HashMap<>();
+        pictureBucketList = new ArrayList<>();
+
+        int maxMemory = (int) Runtime.getRuntime().maxMemory() / 8;
+        pictureCache = new LruCache<String, Bitmap>(maxMemory){
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
+            }
+        };
+    }
+
+    public void setUpInfo(Activity activity){
+        this.activity = activity;
         context = activity.getApplicationContext();
     }
 
     public void loadPictureData(Context context) throws BlackCatException{
 
+        // TODO Delete after debug
+        Log.i(Settings.TAG, "picture buecket map is " + pictureBucketMap);
         if(pictureBucketMap.size() == 0){
             Cursor cursor = context.getContentResolver().query(
                     Settings.QUERY_URI,
@@ -75,6 +83,7 @@ public class PictureProvider{
                     int tempBucketId = cursor.getColumnIndex(Settings.PROJECTION[2]);
                     int tempBucketName = cursor.getColumnIndex(Settings.PROJECTION[3]);
                     int tempThumbnail = cursor.getColumnIndex(Settings.PROJECTION[4]);
+                    int tempPictureName = cursor.getColumnIndex(Settings.PROJECTION[5]);
 
                     do {
 
@@ -83,6 +92,7 @@ public class PictureProvider{
                         String bucketId = cursor.getString(tempBucketId);
                         String bucketName = cursor.getString(tempBucketName);
                         String thumbnail = cursor.getString(tempThumbnail);
+                        String pictureName = cursor.getString(tempPictureName);
 
                         PictureBucket pictureBucket = pictureBucketMap.get(bucketId);
                         Log.i(Settings.TAG, "Bucket name is " + bucketName);
@@ -94,7 +104,7 @@ public class PictureProvider{
                             pictureBucketList.add(pictureBucket);
                         }
 
-                        Picture picture = new Picture(pictureId, picturePath, pictureBucket, thumbnail);
+                        Picture picture = new Picture(pictureId, picturePath, pictureBucket, thumbnail, pictureName);
                         pictureBucket.AddToPictureList(picture);
 
                     } while (cursor.moveToNext());
@@ -120,8 +130,13 @@ public class PictureProvider{
 
     public void addToCachedBitmap(String thumbnail, Bitmap bitmap){
         pictureCache.put(thumbnail, bitmap);
+        Log.i(Settings.TAG, "picture cache is " + pictureCache.toString());
     }
 
+    public void destory(){
+        activity = null;
+        context = null;
+    }
     public void clear(){
         pictureBucketMap.clear();
     }

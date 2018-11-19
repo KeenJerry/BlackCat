@@ -44,6 +44,7 @@ public class Settings {
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Thumbnails.DATA,
+            MediaStore.Images.Media.DISPLAY_NAME
     };
     public static final String SELECTION = null;
     public static final String[] SELECTION_ARGS = null;
