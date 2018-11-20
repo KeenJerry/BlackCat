@@ -3,6 +3,8 @@ package com.android.keenjackdaw.blackcat;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.iflytek.cloud.SpeechConstant;
+
 public class Settings {
     private Settings(){}
 
@@ -49,5 +51,9 @@ public class Settings {
     public static final String SELECTION = null;
     public static final String[] SELECTION_ARGS = null;
     public static final String QUERY_ORDER = MediaStore.Images.Media.DATE_TAKEN + " DESC ";
+
+    public static final String IFLYTEK_APP_ID = "=5bf2abaa";
+    public static final String ENGINE_MODE = "=" + SpeechConstant.MODE_MSC;
+    public static final String DEFAULT_SPEEKER = "xiaoyan";
 
 }

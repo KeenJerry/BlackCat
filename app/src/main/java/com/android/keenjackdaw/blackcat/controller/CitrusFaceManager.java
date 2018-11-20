@@ -40,6 +40,8 @@ public class CitrusFaceManager {
     private List<String> userProfile = null;
     private static final TimeRange timeRange = new TimeRange();
     private String nameFilePath = null;
+    private Speeker speeker = null;
+    private int time = (int) (System.currentTimeMillis() / 1000);
 
     @Contract(pure = true)
     public static CitrusFaceManager getInstance() {
@@ -63,6 +65,8 @@ public class CitrusFaceManager {
     }
 
     public void initCitrusFaceSDK(int width, int height) throws BlackCatException{
+        speeker = new Speeker(activity);
+
         citrusFaceSDK = new CitrusFaceSDK();
         if(!auth()){
             throw new BlackCatException("SDK auth failed.");
@@ -276,15 +280,28 @@ public class CitrusFaceManager {
                     // TODO Delete after debug
                     Log.i(Settings.TAG, "user profile is " + userProfile.toString());
                     Log.i(Settings.TAG, "id is " + id);
+                    int timeNow = (int)(System.currentTimeMillis() / 1000);
                     if (id >= 0) {
-                        if(userProfile == null)
+                        if(userProfile == null){
+                            if((timeNow - time) > 4){
+                                time = timeNow;
+                                speeker.speek("嘀");
+                            }
                             result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
-                        else
-                        {
-
+                        }
+                        else {
+                            if((timeNow - time) > 3){
+                                time = timeNow;
+                                speeker.speek(userProfile.get(id / 2));
+                            }
                             result = trackId + ":" + userProfile.get(id / 2);
                         }
-                    } else {
+                    }
+                    else {
+                        if((timeNow - time) > 1.5){
+                            time = timeNow;
+                            speeker.speek("嘀");
+                        }
                         result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                     }
 
@@ -417,6 +434,7 @@ public class CitrusFaceManager {
     public int addToDB(int id){
         return citrusFaceSDK.DBAdd(id);
     }
+
     static class TimeRange {
         private long frameCount;
         private long frameCurTime;

@@ -15,6 +15,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.DataCenterActivity;
@@ -22,11 +23,20 @@ import com.android.keenjackdaw.blackcat.controller.CameraNew;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.controller.CameraOld;
 import com.android.keenjackdaw.blackcat.controller.CitrusFaceManager;
+import com.android.keenjackdaw.blackcat.controller.Speeker;
 import com.android.keenjackdaw.blackcat.exception.BlackCatException;
 import com.android.keenjackdaw.blackcat.ui.Camera2View;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.SynthesizerListener;
+import com.iflytek.cloud.util.ResourceUtil;
 
 public class CameraFragment extends Fragment {
 
@@ -38,6 +48,7 @@ public class CameraFragment extends Fragment {
     RectView rectView = null;
     ImageButton addPictureButton = null;
     CitrusFaceManager citrusFaceManager = null;
+
     // Context context = null;
 
 
@@ -47,8 +58,6 @@ public class CameraFragment extends Fragment {
     private Thread detectThread = null;
     private Thread recognitionThread = null;
 
-    private int faceNumUnrecognized = 0;
-    // Handler cameraHandler = null;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -66,6 +75,7 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v;
+
         citrusFaceManager = CitrusFaceManager.getInstance();
 
         if(Settings.IS_USING_CAMERA2){
@@ -169,7 +179,6 @@ public class CameraFragment extends Fragment {
                     setDetectionRunnable();
                     setRecognitionRunnable();
 
-
                 }
 
                 @Override
@@ -179,7 +188,7 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-                    // cameraOld.stopPreview();
+
                 }
             });
 
@@ -226,7 +235,6 @@ public class CameraFragment extends Fragment {
                 try {
                     Thread.sleep(2000);
                     while (isRunning()) {
-                        // TEST
 
                         Log.i(Settings.TAG, "in onPreviewFrame.");
                         setCurrentTime(System.currentTimeMillis());
@@ -266,7 +274,7 @@ public class CameraFragment extends Fragment {
                     Log.i(Settings.TAG, "in recognition , faca Num");
                     // Thread.sleep(2000);
                     for (int i = 0; i < faceNum; i++) {
-                        Pair<Integer, Integer> result = citrusFaceManager.doFaceRecognition(i);
+                        citrusFaceManager.doFaceRecognition(i);
                         // TODO Need refactor
 //                        if(result != null){
 //                            if (result.first == 0) {
@@ -279,5 +287,6 @@ public class CameraFragment extends Fragment {
             }
         };
     }
+
 
 }
