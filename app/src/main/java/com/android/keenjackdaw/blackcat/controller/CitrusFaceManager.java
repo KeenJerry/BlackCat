@@ -285,7 +285,7 @@ public class CitrusFaceManager {
                         if(userProfile == null){
                             if((timeNow - time) > 4){
                                 time = timeNow;
-                                speeker.speek("嘀");
+                                speeker.speek("滴");
                             }
                             result = isNewOne + "[" + trackId + "]:id" + id + "-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                         }
@@ -300,7 +300,7 @@ public class CitrusFaceManager {
                     else {
                         if((timeNow - time) > 1.5){
                             time = timeNow;
-                            speeker.speek("嘀");
+                            speeker.speek("滴");
                         }
                         result = isNewOne + "[" + trackId + "]:[" + gender + "," + child + "," + age + "]-s:" + score + "-[" + (int) ((rectBox[2] - rectBox[0]) * CameraOld.getInstance().getPreviewSize().width) + "x" + (int) ((rectBox[3] - rectBox[1]) * CameraOld.getInstance().getPreviewSize().height) + "]";
                     }

@@ -55,6 +55,7 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
         ImageView thumbnailView = view.findViewById(R.id.picture_thumbnail);
         final ImageView selectIconView = view.findViewById(R.id.select_icon);
         final EditText editText = view.findViewById(R.id.picture_name);
+        editText.removeTextChangedListener(editText.getTag() == null? null: (TextWatcher) editText.getTag());
 
         Bitmap thumbnail;
 
@@ -109,7 +110,7 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
             }
         });
 
-        editText.addTextChangedListener(new TextWatcher() {
+        TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -117,14 +118,16 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                // picture.setPictureName(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 picture.setPictureName(s.toString());
             }
-        });
+        };
+        editText.addTextChangedListener(textWatcher);
+        editText.setTag(textWatcher);
 
 
         return view;

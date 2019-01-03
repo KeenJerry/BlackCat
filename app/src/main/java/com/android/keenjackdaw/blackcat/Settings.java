@@ -52,7 +52,7 @@ public class Settings {
     public static final String[] SELECTION_ARGS = null;
     public static final String QUERY_ORDER = MediaStore.Images.Media.DATE_TAKEN + " DESC ";
 
-    public static final String IFLYTEK_APP_ID = "=5bf2abaa";
+    public static final String IFLYTEK_APP_ID = "=5c28cb52";
     public static final String ENGINE_MODE = "=" + SpeechConstant.MODE_MSC;
     public static final String DEFAULT_SPEEKER = "xiaoyan";
 

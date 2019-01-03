@@ -97,11 +97,11 @@ public class Speeker {
         speeker.setParameter(SpeechConstant.VOICE_NAME, Settings.DEFAULT_SPEEKER);
 
         //设置合成语速
-        speeker.setParameter(SpeechConstant.SPEED, "100");
+        speeker.setParameter(SpeechConstant.SPEED, "50");
         //设置合成音调
         speeker.setParameter(SpeechConstant.PITCH, "50");
         //设置合成音量
-        speeker.setParameter(SpeechConstant.VOLUME, "4");
+        speeker.setParameter(SpeechConstant.VOLUME, "30");
         //设置播放器音频流类型
         speeker.setParameter(SpeechConstant.STREAM_TYPE, "3");
 
