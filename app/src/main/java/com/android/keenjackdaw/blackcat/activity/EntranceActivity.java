@@ -18,7 +18,7 @@ public class EntranceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entrance);
 
-        final long DELAY_MILLS = 3000;
+        final long DELAY_MILLS = 1000;
         loadingView = findViewById(R.id.loading_view);
         final Intent intent = new Intent(this, CameraActivity.class);
         handler = new Handler();
