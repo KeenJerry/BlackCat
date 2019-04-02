@@ -46,12 +46,12 @@ public class GridViewAdaptor extends ArrayAdapter<Picture> {
         Log.i(Settings.TAG, "picture id = " + picture.getPictureId());
 
         View view;
-        if(convertView == null){
-            view = LayoutInflater.from(getContext()).inflate(R.layout.picture, null);
-        }
-        else {
-            view = convertView;
-        }
+
+        view = LayoutInflater.from(getContext()).inflate(R.layout.picture, null);
+
+//        else {
+//            view = convertView;
+//        }
         ImageView thumbnailView = view.findViewById(R.id.picture_thumbnail);
         final ImageView selectIconView = view.findViewById(R.id.select_icon);
         final EditText editText = view.findViewById(R.id.picture_name);

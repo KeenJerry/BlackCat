@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:id="@+id/camera_view"/>
 
-    <com.android.keenjackdaw.blackcat.ui.RectView
-        android:id="@+id/rect_view"
+    <com.rokid.facelib.view.InjectFaceView
+        android:id="@+id/inject_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

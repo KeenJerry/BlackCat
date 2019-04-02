@@ -27,6 +27,13 @@ import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 import com.android.keenjackdaw.blackcat.utils.GridViewAdaptor;
 import com.android.keenjackdaw.blackcat.utils.Picture;
 import com.android.keenjackdaw.blackcat.utils.PictureBucket;
+import com.rokid.facelib.ImageRokidFace;
+import com.rokid.facelib.api.IImageRokidFace;
+import com.rokid.facelib.api.ImageFaceCallback;
+import com.rokid.facelib.db.UserInfo;
+import com.rokid.facelib.input.BitmapInput;
+import com.rokid.facelib.model.FaceDO;
+import com.rokid.facelib.model.FaceModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,20 +69,15 @@ public class DataCenterFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_data_center, container, false);
         pictureProvider = PictureProvider.getInstance();
 
-        Log.i(Settings.TAG, "get picture provider completed.");
-
         Button backButton = v.findViewById(R.id.back_to_camera_activity_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CameraActivity.class);
-                citrusFaceManager.destroySDK();
                 pictureProvider.destory();
                 startActivity(intent);
             }
         });
-
-        Log.i(Settings.TAG, "back button inited.");
 
         final GridView gridView = v.findViewById(R.id.picture_grid_layout);
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -90,32 +92,8 @@ public class DataCenterFragment extends Fragment {
             }
         });
 
-
-        // TODO Delete below after debug
-        i(Settings.TAG, "grid view init.");
-
-        // threadPool = Executors.newCachedThreadPool();
-        // threadPool.shutdown();
-
         citrusFaceManager = CitrusFaceManager.getInstance();
         citrusFaceManager.setUpAppInfo(getActivity());
-
-        Log.i(Settings.TAG, "set up app info completed.");
-        try {
-            citrusFaceManager.initCitrusFaceSDKWithoutBuffer();
-        }catch (BlackCatException e){
-            // TODO Delete after debug
-            Log.i(Settings.TAG, "External storage not allowed.");
-            e.printStackTrace();
-        }
-        Log.i(Settings.TAG, "init citrus SDK completed.");
-        citrusFaceManager.reset();
-        nameFilePath = citrusFaceManager.getNameFilePath();
-        nameList = citrusFaceManager.readNames(nameFilePath);
-
-        Log.i(Settings.TAG, "read name file completed.");
-
-        Log.i(Settings.TAG, "picture provider init");
 
         try{
             pictureProvider.initPictureProvider();
@@ -147,15 +125,12 @@ public class DataCenterFragment extends Fragment {
             public void onClick(View v) {
                 int count = gridViewAdaptor.getCount();
                 for(int i = 0; i < count; i++){
-                    Picture picture = gridViewAdaptor.getItem(i);
-                    // TODO Delete below after debug
-                    i(Settings.TAG, "picture is " + picture.getPicturePath());
+                    final Picture picture = gridViewAdaptor.getItem(i);
+
                     if(picture != null){
                         if(picture.isSelected()){
-                            // TODO Delete below after debug
-                            i(Settings.TAG, "pic " + picture.getPicturePath() + " is selected.");
                             Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
-                            Bitmap scaledBitmap;
+                            final Bitmap scaledBitmap;
 
                             int h = bitmap.getHeight();
                             int w = bitmap.getWidth();
@@ -171,51 +146,23 @@ public class DataCenterFragment extends Fragment {
                             } else {
                                 scaledBitmap = bitmap;
                             }
+                            citrusFaceManager.getImageFace().setImageFaceCallback(new BitmapInput(scaledBitmap), new ImageFaceCallback() {
+                                @Override
+                                public void onFaceModel(FaceModel faceModel) {
+                                    FaceDO faceDO = faceModel.getFaceList().get(0);
 
-
-                            // TODO Delete below after debug
-                            Log.i(Settings.TAG, "bitmap width = " + bitmap.getWidth() + ", height = " + bitmap.getHeight());
-                            Log.i(Settings.TAG, "Scaled bitmap width = " + scaledBitmap.getWidth() + ", height = " + scaledBitmap.getHeight());
-
-                            citrusFaceManager.reset();
-
-                            citrusFaceManager.detectWithImage(scaledBitmap, 3);
-                            faceListNum = citrusFaceManager.getResListNum();
-                            faceNum = citrusFaceManager.getResFaceNum();
-
-                            // TODO Delete below after debug
-                            Log.i(Settings.TAG, "face number is " + faceNum);
-                            Log.i(Settings.TAG, "face list number is " + faceListNum);
-
-                            if(faceNum > 0){
-                                idNow = 0;
-                                citrusFaceManager.faceRecognition(idNow);
-                                // TODO Delete after debug
-                                Log.i(Settings.TAG, "add to db return " + citrusFaceManager.addToDB(idNow));
-                                if(citrusFaceManager.addToDB(idNow) == 0){
-                                    // TODO Delete after debug
-                                    Log.i(Settings.TAG, "id is " + idNow);
-                                    Log.i(Settings.TAG, "name list is " + nameList.toString());
-                                    Log.i(Settings.TAG, "picture name is " + picture.getPictureName());
-
-                                    nameList.add(picture.getPictureName());
-                                    try{
-                                        citrusFaceManager.writeNames(citrusFaceManager.getNameFilePath(), nameList);
+                                    if(faceDO == null){
+                                        Toast.makeText(getContext(), "Add face failed.", Toast.LENGTH_SHORT).show();
                                     }
-                                    catch (BlackCatException e){
-                                        e.printStackTrace();
+                                    else
+                                    {
+                                        UserInfo info = new UserInfo(picture.getPictureName(), picture.getPictureId());
+                                        citrusFaceManager.addUser(scaledBitmap, info);
+                                        Toast.makeText(getContext(), "Add face success.", Toast.LENGTH_SHORT).show();
+
                                     }
-                                    Toast.makeText(getContext(), "Add face succeeded." + i, Toast.LENGTH_SHORT).show();
-                                }else
-                                {
-                                    Toast.makeText(getContext(), "add To DB failed.", Toast.LENGTH_SHORT).show();
                                 }
-
-                            }
-                            else {
-                                Toast.makeText(getContext(), "Add face failed. Please check the direction of the picture.", Toast.LENGTH_SHORT).show();
-                            }
-
+                            });
                         }
                     }
                 }

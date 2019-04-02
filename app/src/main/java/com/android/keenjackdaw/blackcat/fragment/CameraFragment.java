@@ -2,9 +2,13 @@ package com.android.keenjackdaw.blackcat.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,14 +33,16 @@ import com.android.keenjackdaw.blackcat.ui.Camera2View;
 import com.android.keenjackdaw.blackcat.ui.CameraView;
 import com.android.keenjackdaw.blackcat.ui.RectView;
 import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechSynthesizer;
-import com.iflytek.cloud.SpeechUtility;
-import com.iflytek.cloud.SynthesizerListener;
-import com.iflytek.cloud.util.ResourceUtil;
+import com.rokid.facelib.api.RokidFaceCallback;
+import com.rokid.facelib.face.FaceDbHelper;
+import com.rokid.facelib.input.VideoInput;
+import com.rokid.facelib.model.FaceDO;
+import com.rokid.facelib.model.FaceModel;
+import com.rokid.facelib.view.InjectFaceView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class CameraFragment extends Fragment {
 
@@ -49,14 +55,25 @@ public class CameraFragment extends Fragment {
     ImageButton addPictureButton = null;
     CitrusFaceManager citrusFaceManager = null;
 
+    String faceInfo = null;
+    InjectFaceView injectFaceView = null;
+
     // Context context = null;
 
 
     private BlackCatRunnable detectionRunnable = null;
     private BlackCatRunnable recognitionRunnable = null;
+    private BlackCatRunnable aggRunnable = null;
 
     private Thread detectThread = null;
     private Thread recognitionThread = null;
+    private Thread aggThread = null;
+
+
+    private Handler mH = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) { }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -75,160 +92,123 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v;
-
         citrusFaceManager = CitrusFaceManager.getInstance();
 
-        if(Settings.IS_USING_CAMERA2){
-            v = inflater.inflate(R.layout.fragment_camera2, container, false);
-            camera2View = v.findViewById(R.id.camera2_view);
-            camera2View.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-                @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-
-                    cameraNew.setUpAppInfo();
-
-                    try {
-                        cameraNew.initCamera();
-                    }
-                    catch (BlackCatException e){
-                        e.printStackTrace();
-                    }
-
+        v = inflater.inflate(R.layout.fragment_camera, container, false);
+        cameraView = v.findViewById(R.id.camera_view);
+        injectFaceView = v.findViewById(R.id.inject_view);
+        cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                cameraOld.setUpAppInfo();
+                try {
+                    cameraOld.initCamera();
+                    cameraOld.openBackCamera();
+                } catch (BlackCatException e) {
+                    e.printStackTrace();
                 }
 
-                @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+                citrusFaceManager.setUpAppInfo(getActivity());
+                try {
+                    citrusFaceManager.initCitrusFaceSDK(cameraOld.getPreviewSize().width, cameraOld.getPreviewSize().height);
+                } catch (BlackCatException e) {
+                    e.printStackTrace();
                 }
 
-                @Override
-                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                    detectionRunnable.setRunning(false);
-                    recognitionRunnable.setRunning(false);
-                    return false;
-                }
+                Camera.PreviewCallback callback = new Camera.PreviewCallback() {
+                    @Override
+                    public void onPreviewFrame(byte[] data, Camera camera) {
+                        if(camera != null){
+                            camera.addCallbackBuffer(data);
+                            citrusFaceManager.getVideoFace().setData(new VideoInput(data));
+                            citrusFaceManager.getVideoFace().startTrack(new RokidFaceCallback() {
+                                @Override
+                                public void onFaceCallback(FaceModel faceModel) {
+                                    List<Rect> list = new ArrayList<>();
+                                    List<String> textList = new ArrayList<>();
+                                    for (FaceDO face : faceModel.getFaceList()) {
+                                        Rect rect;
+                                        if (false) {
+                                            rect = face.toMirroRect(cameraView.getWidth(), cameraView.getHeight());
+                                        } else {
+                                            rect = face.toRect(cameraView.getWidth(), cameraView.getHeight());
+                                        }
+                                        list.add(rect);
+                                        StringBuilder sb = new StringBuilder();
+                                        if (face.pose != null) {
+                                            sb.append("pose:");
+                                            for (float f : face.pose) {
+                                                sb.append(f).append(",");
+                                            }
+                                            sb.append("\n");
+                                        }
+                                        if (face.userInfo != null) {
+                                            sb.append("name:" + face.userInfo.name + "\n");
+                                            textList.add(face.userInfo.name);
+                                        } else {
+                                            textList.add("unkown");
+                                        }
 
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-                    citrusFaceManager.doFaceTrack();
-                    if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
-                        detectionRunnable.setRunning(true);
-                        recognitionRunnable.setRunning(true);
-                        new Thread(detectionRunnable).start();
-                        new Thread(recognitionRunnable).start();
-                        // TODO Delete this todo task until camera2 is fully supported.
-                    }
-
-                }
-            });
-        }
-        else{
-            v = inflater.inflate(R.layout.fragment_camera, container, false);
-            cameraView = v.findViewById(R.id.camera_view);
-            cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
-                @Override
-                public void surfaceCreated(SurfaceHolder holder) {
-                    cameraOld.setUpAppInfo();
-                    try {
-                        cameraOld.initCamera();
-                        cameraOld.openBackCamera();
-                    } catch (BlackCatException e) {
-                        e.printStackTrace();
-                    }
-
-                    citrusFaceManager.setUpAppInfo(getActivity());
-                    try {
-                        citrusFaceManager.initCitrusFaceSDK(cameraOld.getPreviewSize().width, cameraOld.getPreviewSize().height);
-                    } catch (BlackCatException e) {
-                        e.printStackTrace();
-                    }
-
-                    Camera.PreviewCallback callback = new Camera.PreviewCallback() {
-                        @Override
-                        public void onPreviewFrame(byte[] data, Camera camera) {
-
-                            if(camera != null){
-
-                                if(!detectionRunnable.isRunning() && !recognitionRunnable.isRunning()){
-                                    detectionRunnable.setRunning(true);
-                                    recognitionRunnable.setRunning(true);
-                                    detectThread = new Thread(detectionRunnable);
-                                    recognitionThread = new Thread(recognitionRunnable);
-
-                                    detectThread.start();
-                                    recognitionThread.start();
+                                        if (face.sharpness != 0) {
+                                            sb.append("sharpness:" + face.sharpness + "\n");
+                                        }
+                                        faceInfo = sb.toString();
+                                        mH.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                // tv_text.setText(faceInfo);
+                                            }
+                                        });
+                                    }
+                                    injectFaceView.drawRects(list, textList);
                                 }
+                            });
 
-                                citrusFaceManager.doFaceTrack();
 
-                                citrusFaceManager.drawRect(rectView);
-
-                                camera.addCallbackBuffer(data);
-                            }
                         }
-                    };
-
-                    cameraOld.setPreviewCallback(callback);
-                    cameraOld.startPreview(citrusFaceManager.getByteBuffers(), holder);
-                    try{
-                        cameraOld.startFaceDetection();
-                    }catch (BlackCatException e){
-                        e.printStackTrace();
                     }
+                };
 
-                    setDetectionRunnable();
-                    setRecognitionRunnable();
-
+                cameraOld.setPreviewCallback(callback);
+                cameraOld.startPreview(citrusFaceManager.getByteBuffers(), holder);
+                try{
+                    cameraOld.startFaceDetection();
+                }catch (BlackCatException e){
+                    e.printStackTrace();
                 }
 
-                @Override
-                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
 
-                }
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-                @Override
-                public void surfaceDestroyed(SurfaceHolder holder) {
+            }
 
-                }
-            });
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
 
-            addPictureButton = v.findViewById(R.id.add_picture_button);
-            addPictureButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            }
+        });
 
-                    detectionRunnable.setRunning(false);
-                    recognitionRunnable.setRunning(false);
-                    detectThread.interrupt();
-                    recognitionThread.interrupt();
+        addPictureButton = v.findViewById(R.id.add_picture_button);
+        addPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    try{
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
+                citrusFaceManager.getVideoFace().destroy();
+                cameraOld.closeCamera();
 
-                    Log.i(Settings.TAG, "thread stopped.");
-                    cameraOld.closeCamera();
-                    citrusFaceManager.destroySDK();
-
-                    Log.i(Settings.TAG, "SDK and camera closed.");
-
-                    Intent intent = new Intent(getActivity(), DataCenterActivity.class);
-                    Log.i(Settings.TAG, "intent inited.");
-                    startActivity(intent);
-                }
-            });
-        }
-        rectView = v.findViewById(R.id.rect_view);
-        rectView.init();
+                Intent intent = new Intent(getActivity(), DataCenterActivity.class);
+                Log.i(Settings.TAG, "intent inited.");
+                startActivity(intent);
+            }
+        });
 
         return v;
     }
 
-    public void setDetectionRunnable(){
-        detectionRunnable = new BlackCatRunnable() {
+    public void setAggRunnable() {
+        aggRunnable = new BlackCatRunnable() {
             @Override
             protected void blackCatRun() {
 
@@ -236,57 +216,13 @@ public class CameraFragment extends Fragment {
                     Thread.sleep(2000);
                     while (isRunning()) {
 
-                        Log.i(Settings.TAG, "in onPreviewFrame.");
-                        setCurrentTime(System.currentTimeMillis());
-                        int faceNum = 0;
-                        if(isRunning()){
-                            faceNum = citrusFaceManager.getFaceNum();
-                        }
-                        // TODO Delete below after debug
-                        Log.i(Settings.TAG, "face detected:" + faceNum);
-                        setCurrentTime(System.currentTimeMillis() - getCurrentTime());
-                        if (faceNum == 5) {
-                            while (citrusFaceManager.getResFaceNum() == 5) {
-                                Thread.sleep(500);
-                            }
-                        }
                     }
                 }
-                catch (InterruptedException e){
-                    e.printStackTrace();
+                catch(Exception e){
+
                 }
             }
 
         };
     }
-
-    public void setRecognitionRunnable(){
-        recognitionRunnable = new BlackCatRunnable() {
-            @Override
-            protected void blackCatRun() {
-                while (isRunning()) {
-
-                    int faceNum = 0;
-                    if(isRunning()){
-                        faceNum = citrusFaceManager.getResFaceNum();
-                    }
-                    // TODO Delete after debug
-                    Log.i(Settings.TAG, "in recognition , faca Num");
-                    // Thread.sleep(2000);
-                    for (int i = 0; i < faceNum; i++) {
-                        citrusFaceManager.doFaceRecognition(i);
-                        // TODO Need refactor
-//                        if(result != null){
-//                            if (result.first == 0) {
-//                                Log.i(Settings.TAG, "Recog " + i + ", id = " + result.second);
-//                            }
-//                        }
-
-                    }
-                }
-            }
-        };
-    }
-
-
 }
