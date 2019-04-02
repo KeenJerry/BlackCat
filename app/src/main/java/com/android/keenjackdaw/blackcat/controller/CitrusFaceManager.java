@@ -24,21 +24,9 @@ import com.rokid.facelib.db.UserInfo;
 import com.rokid.facelib.engine.DataFormat;
 import com.rokid.facelib.engine.FaceDbEngine;
 import com.rokid.facelib.face.FaceDbHelper;
-import com.rokid.facelib.input.VideoInput;
 
 import org.jetbrains.annotations.Contract;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class CitrusFaceManager {
     private CitrusFaceManager() {}
@@ -83,13 +71,18 @@ public class CitrusFaceManager {
         videoFace.destroy();
     }
 
+    public void save(){
+        dbCreator.save();
+    }
+
     public void initCitrusFaceSDK(int width, int height) throws BlackCatException{
         speeker = new Speeker(activity);
         setBuffer(width, height);
 
         dbCreator = new FaceDbHelper(appContext);
-
+        dbCreator.clearDb();
         dbCreator.configDb("user.db");
+        // dbCreator.save();
 
         UserInfo info = dbCreator.query("5d4e6666-8264-40b7-8ecc-137b4e01e493");
 

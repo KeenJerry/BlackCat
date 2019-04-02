@@ -35,6 +35,8 @@ import com.rokid.facelib.input.BitmapInput;
 import com.rokid.facelib.model.FaceDO;
 import com.rokid.facelib.model.FaceModel;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -129,7 +131,16 @@ public class DataCenterFragment extends Fragment {
 
                     if(picture != null){
                         if(picture.isSelected()){
-                            Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
+                            FileInputStream fis = null;
+                            try{
+                                fis = new FileInputStream(picture.getPicturePath());
+                            }
+                            catch (FileNotFoundException e){
+                                e.printStackTrace();
+                            }
+
+                            final Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                            //final Bitmap bitmap1 = BitmapFactory.
                             final Bitmap scaledBitmap;
 
                             int h = bitmap.getHeight();
@@ -146,7 +157,7 @@ public class DataCenterFragment extends Fragment {
                             } else {
                                 scaledBitmap = bitmap;
                             }
-                            citrusFaceManager.getImageFace().setImageFaceCallback(new BitmapInput(scaledBitmap), new ImageFaceCallback() {
+                            citrusFaceManager.getImageFace().setImageFaceCallback(new BitmapInput(bitmap), new ImageFaceCallback() {
                                 @Override
                                 public void onFaceModel(FaceModel faceModel) {
                                     FaceDO faceDO = faceModel.getFaceList().get(0);
@@ -157,7 +168,8 @@ public class DataCenterFragment extends Fragment {
                                     else
                                     {
                                         UserInfo info = new UserInfo(picture.getPictureName(), picture.getPictureId());
-                                        citrusFaceManager.addUser(scaledBitmap, info);
+                                        citrusFaceManager.addUser(bitmap, info);
+                                        citrusFaceManager.save();
                                         Toast.makeText(getContext(), "Add face success.", Toast.LENGTH_SHORT).show();
 
                                     }

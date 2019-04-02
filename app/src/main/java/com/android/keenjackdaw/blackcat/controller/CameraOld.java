@@ -94,7 +94,7 @@ public class CameraOld {
         cameraParam.setPictureFormat(PixelFormat.JPEG);
         Size suitablePreviewSize = getSuitablePreviewSize();
         cameraParam.setPreviewSize(suitablePreviewSize.width, suitablePreviewSize.height);
-        previewSize =suitablePreviewSize;
+        previewSize = suitablePreviewSize;
 
         List<String> availableFocusMode = cameraParam.getSupportedFocusModes();
         if(availableFocusMode.contains("continuous-video")){
