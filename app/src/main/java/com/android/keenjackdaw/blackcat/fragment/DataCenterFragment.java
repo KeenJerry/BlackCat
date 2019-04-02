@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.android.keenjackdaw.blackcat.BlackCatApplication;
 import com.android.keenjackdaw.blackcat.R;
 import com.android.keenjackdaw.blackcat.Settings;
 import com.android.keenjackdaw.blackcat.activity.CameraActivity;
@@ -27,8 +25,7 @@ import com.android.keenjackdaw.blackcat.utils.BlackCatRunnable;
 import com.android.keenjackdaw.blackcat.utils.GridViewAdaptor;
 import com.android.keenjackdaw.blackcat.utils.Picture;
 import com.android.keenjackdaw.blackcat.utils.PictureBucket;
-import com.rokid.facelib.ImageRokidFace;
-import com.rokid.facelib.api.IImageRokidFace;
+
 import com.rokid.facelib.api.ImageFaceCallback;
 import com.rokid.facelib.db.UserInfo;
 import com.rokid.facelib.input.BitmapInput;
@@ -40,8 +37,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.util.Log.i;
 
@@ -51,13 +46,6 @@ public class DataCenterFragment extends Fragment {
     private List<PictureBucket> pictureBuckets = null;
     private BlackCatRunnable loadPictureRunnable = null;
     private CitrusFaceManager citrusFaceManager = null;
-    private ExecutorService threadPool = null;
-    private GridViewAdaptor gridViewAdaptor = null;
-    private String nameFilePath = null;
-    private List<String> nameList = null;
-    private int faceListNum = 0;
-    private int faceNum = 0;
-    private int idNow = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,22 +176,6 @@ public class DataCenterFragment extends Fragment {
     public void onDestroy() {
 
         super.onDestroy();
-    }
-
-    public void setLoadPictureRunnable(){
-        loadPictureRunnable = new BlackCatRunnable() {
-            @Override
-            protected void blackCatRun() {
-                while(isRunning()){
-
-                    try{
-                        throw new InterruptedException();
-                    }catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
     }
 
 }
