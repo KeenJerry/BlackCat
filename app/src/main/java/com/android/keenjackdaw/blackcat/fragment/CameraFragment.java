@@ -121,50 +121,9 @@ public class CameraFragment extends Fragment {
                         if(camera != null){
                             camera.addCallbackBuffer(data);
                             citrusFaceManager.getVideoFace().setData(new VideoInput(data));
-                            citrusFaceManager.getVideoFace().startTrack(new RokidFaceCallback() {
-                                @Override
-                                public void onFaceCallback(FaceModel faceModel) {
-                                    List<Rect> list = new ArrayList<>();
-                                    List<String> textList = new ArrayList<>();
-                                    for (FaceDO face : faceModel.getFaceList()) {
-                                        Rect rect;
-                                        if (false) {
-                                            rect = face.toMirroRect(cameraView.getWidth(), cameraView.getHeight());
-                                        } else {
-                                            rect = face.toRect(cameraView.getWidth(), cameraView.getHeight());
-                                        }
-                                        list.add(rect);
-                                        StringBuilder sb = new StringBuilder();
-                                        if (face.pose != null) {
-                                            sb.append("pose:");
-                                            for (float f : face.pose) {
-                                                sb.append(f).append(",");
-                                            }
-                                            sb.append("\n");
-                                        }
-                                        if (face.userInfo != null) {
-                                            sb.append("name:" + face.userInfo.name + "\n");
-                                            textList.add(face.userInfo.name);
-                                        } else {
-                                            textList.add("unkown");
-                                        }
-
-                                        if (face.sharpness != 0) {
-                                            sb.append("sharpness:" + face.sharpness + "\n");
-                                        }
-                                        faceInfo = sb.toString();
-                                        mH.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                // tv_text.setText(faceInfo);
-                                            }
-                                        });
-                                    }
-                                    injectFaceView.drawRects(list, textList);
-                                }
+                            citrusFaceManager.getVideoFace().startTrack(model ->{
+                                injectFaceView.drawRects(model.getFaceList(),cameraView.getWidth(),cameraView.getHeight(),false);
                             });
-
-
                         }
                     }
                 };

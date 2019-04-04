@@ -39,12 +39,11 @@ public class CitrusFaceManager {
 
     // facelib
     private IVideoRokidFace videoFace;
-    IImageRokidFace imageFace;
+    private IImageRokidFace imageFace;
 
     FaceDbEngine dbFace;
     private DFaceConf dFaceConf;
     private SFaceConf sFaceConf;
-    private FaceDbHelper dbCreator;
 
     @Contract(pure = true)
     public static CitrusFaceManager getInstance() {
@@ -71,22 +70,13 @@ public class CitrusFaceManager {
         videoFace.destroy();
     }
 
-    public void save(){
-        dbCreator.save();
-    }
-
     public void initCitrusFaceSDK(int width, int height) throws BlackCatException{
         speeker = new Speeker(activity);
         setBuffer(width, height);
-
-        dbCreator = new FaceDbHelper(appContext);
-        dbCreator.clearDb();
-        dbCreator.configDb("user.db");
-        // dbCreator.save();
-
-        UserInfo info = dbCreator.query("5d4e6666-8264-40b7-8ecc-137b4e01e493");
-
         dFaceConf = new DFaceConf();
+        sFaceConf = new SFaceConf();
+
+
         dFaceConf.setSize(width, height);
         dFaceConf.setRoi(new Rect(
                 (int)Settings.ROI_X * width,
@@ -96,8 +86,7 @@ public class CitrusFaceManager {
         ));
         dFaceConf.setDataType(DataFormat.DATA_BITMAP);
 
-        sFaceConf = new SFaceConf();
-        sFaceConf.setRecog(true, "/sdcard/facesdk/user.db");
+        sFaceConf.setRecog(true, "/sdcard/facesdk/");
         sFaceConf.setAutoRecog(true);
 
         videoFace = VideoRokidFace.create(appContext, dFaceConf);
@@ -105,6 +94,7 @@ public class CitrusFaceManager {
 
         imageFace = ImageRokidFace.create(appContext);
         imageFace.sconfig(sFaceConf);
+
     }
 
     private void setBuffer(int width, int height){
@@ -130,7 +120,4 @@ public class CitrusFaceManager {
         return byteBuffers;
     }
 
-    public void addUser(Bitmap bm, UserInfo userInfo){
-        dbCreator.add(bm, userInfo);
-    }
 }

@@ -28,6 +28,7 @@ import com.android.keenjackdaw.blackcat.utils.PictureBucket;
 
 import com.rokid.facelib.api.ImageFaceCallback;
 import com.rokid.facelib.db.UserInfo;
+import com.rokid.facelib.face.FaceDbHelper;
 import com.rokid.facelib.input.BitmapInput;
 import com.rokid.facelib.model.FaceDO;
 import com.rokid.facelib.model.FaceModel;
@@ -46,6 +47,9 @@ public class DataCenterFragment extends Fragment {
     private List<PictureBucket> pictureBuckets = null;
     private BlackCatRunnable loadPictureRunnable = null;
     private CitrusFaceManager citrusFaceManager = null;
+
+    private FaceDbHelper dbCreator;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,10 @@ public class DataCenterFragment extends Fragment {
 
         citrusFaceManager = CitrusFaceManager.getInstance();
         citrusFaceManager.setUpAppInfo(getActivity());
+
+        dbCreator = new FaceDbHelper(getContext());
+        dbCreator.clearDb();
+        dbCreator.configDb("user.db");
 
         try{
             pictureProvider.initPictureProvider();
@@ -127,40 +135,23 @@ public class DataCenterFragment extends Fragment {
                                 e.printStackTrace();
                             }
 
-                            final Bitmap bitmap = BitmapFactory.decodeStream(fis);
-                            //final Bitmap bitmap1 = BitmapFactory.
-                            final Bitmap scaledBitmap;
+                            final Bitmap bitmap = BitmapFactory.decodeFile(picture.getPicturePath());
 
-                            int h = bitmap.getHeight();
-                            int w = bitmap.getWidth();
-
-                            int max = h > w? h: w;
-                            float scale;
-                            if (max > 800) {
-                                scale = (float)800/(float)max;
-
-                                Matrix matrix = new Matrix();
-                                matrix.postScale(scale, scale);
-                                scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
-                            } else {
-                                scaledBitmap = bitmap;
-                            }
                             citrusFaceManager.getImageFace().setImageFaceCallback(new BitmapInput(bitmap), new ImageFaceCallback() {
                                 @Override
                                 public void onFaceModel(FaceModel faceModel) {
-                                    FaceDO faceDO = faceModel.getFaceList().get(0);
-
-                                    if(faceDO == null){
+                                    if(false){
                                         Toast.makeText(getContext(), "Add face failed.", Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                     {
-                                        UserInfo info = new UserInfo(picture.getPictureName(), picture.getPictureId());
-                                        citrusFaceManager.addUser(bitmap, info);
-                                        citrusFaceManager.save();
+                                        // FaceDO faceDO = faceModel.getFaceList().get(0);
+                                        UserInfo info = new UserInfo(picture.getPictureName().split("\\.")[0], picture.getPictureId());
+                                        dbCreator.add(bitmap, info);
+                                        dbCreator.save();
                                         Toast.makeText(getContext(), "Add face success.", Toast.LENGTH_SHORT).show();
-
                                     }
+
                                 }
                             });
                         }
